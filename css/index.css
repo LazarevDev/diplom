@@ -1,0 +1,53 @@
+.salesContainer{
+    align-items: center;
+    margin-top: 20px;
+}
+
+.saleData ul li{
+    font-size: 24px;
+}
+
+.saleDataTitle h2{
+    color: #999;
+    font-size: 18px;
+    font-weight: unset;
+}
+
+.saleDataTitle p{
+    font-size: 48px;
+    color: #FF8A00;
+    font-weight: bold;
+}
+
+.saleData ul{
+    margin-top: 30px
+}
+
+.saleData ul li{
+    color: #999;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.doughnutChart{
+    width: 400px;
+}
+
+.doughnutChart canvas{
+    width: 100%;
+}
+
+
+/* barChartContainer */
+
+.barChartContainer{
+    margin-top: 35px;
+}
+
+.barChart{
+    width: 45%;
+}
+
+.barTable{
+    width: 52%;
+}
