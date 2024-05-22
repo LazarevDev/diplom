@@ -1,0 +1,30 @@
+menu{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 100vh;
+    background: red;
+}
+
+.menuItem{
+    width: 80px;
+    height: 80px;
+    background: #000;
+}
+
+header{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: calc(100% - 80px);
+    height: 80px;
+    background: blue;
+}
+
+.content{
+    width: calc(100% - 150px);
+    height: 300px;
+    margin: 100px 25px 0 105px;
+    background: green;
+}
