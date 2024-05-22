@@ -1,26 +1,7 @@
-menu{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 80px;
-    height: 100vh;
-    background: red;
-}
+@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;800;900&display=swap);
 
-.menuItem{
-    width: 80px;
-    height: 80px;
-    background: #000;
-    margin-bottom: 10px;
-}
-
-header{
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: calc(100% - 80px);
-    height: 80px;
-    background: blue;
+body {
+  font-family: 'Roboto', sans-serif;
 }
 
 .container{
