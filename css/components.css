@@ -11,6 +11,7 @@ menu{
     width: 80px;
     height: 80px;
     background: #000;
+    margin-bottom: 10px;
 }
 
 header{
@@ -22,9 +23,9 @@ header{
     background: blue;
 }
 
-.content{
-    width: calc(100% - 150px);
+.container{
+    width: calc(100% - 130px);
     height: 300px;
-    margin: 100px 25px 0 105px;
+    margin: 95px 0 0 105px;
     background: green;
 }
