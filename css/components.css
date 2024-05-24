@@ -6,7 +6,6 @@ body {
 
 .container{
     width: calc(100% - 130px);
-    height: 300px;
     margin: 95px 0 0 105px;
 }
 
@@ -16,11 +15,24 @@ body {
 }
 
 .content{
-    background: #fff;
     width: calc(100% - 50px);
     padding: 25px;
     border-radius: 20px;
-    margin: 20px 0 60px 0;
+    margin: 20px 0 40px 0;
+}
+
+.contentWhite{
+    background: #fff;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+.contentForm{
+    width: 560px;
+}
+
+.contentInfo{
+    width: calc(100% - 685px);
 }
 
 .contentTitle{
@@ -39,7 +51,9 @@ body {
     justify-content: space-between;
 }
 
-
+.tableContent{
+    margin-top: 20px;
+}
 
 table{
     border-radius: 10px;
@@ -54,6 +68,10 @@ tr{
     text-align: left;
     padding: 20px;
     border: 0px;
+}
+
+tr:nth-child(2n){
+    background: #FAFAFA;
 }
 
 tr:hover{
@@ -114,5 +132,43 @@ td{
 
 .tdAction svg{
     fill: #999;
-    height: 12px;
+    height: 13px;
+}
+
+
+/* form */
+
+.input{
+    width: calc(100% - 22px);
+    padding: 16px 10px;
+    background: #FAFAFA;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+.textarea{
+    width: calc(100% - 22px);
+    height: 120px;
+    padding: 16px 10px;
+    background: #FAFAFA;
+    border-radius: 5px;
+    resize: vertical;
+    margin-top: 15px;
+}
+
+.btn{
+    display: inline-block;
+    padding: 14px 28px;
+    background: #FF8A00;
+    border: 1px solid #FF8A00;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: .4s;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.btn:hover{
+    background: none;
+    color: #FF8A00;
 }
