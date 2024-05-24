@@ -28,11 +28,11 @@ body {
 }
 
 .contentForm{
-    width: 560px;
+    width: 460px;
 }
 
 .contentInfo{
-    width: calc(100% - 685px);
+    width: calc(100% - 585px);
 }
 
 .contentTitle{

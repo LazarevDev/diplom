@@ -1,0 +1,36 @@
+# Enable rewriting engine
+RewriteEngine On
+# 0. Открытие псевдостраницы
+# RewriteRule ^([^/]+)$ category.php?city=$1 [L]
+# RewriteRule ^([^/]+)/([^/]+)$ category.php?city=$1&slug=$2 [L]
+# RewriteRule ^category/([^/\.]+)/?$ category.php?city=$1&slug=$2 [L]
+# RewriteRule category[/]*$ category.php?city=$1&slug=$2 [L]
+
+
+# 1. Обрезаем расширение файлов
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+# RewriteRule ^lang/([^.]+)/$ index.php?city=$1 [L]
+# 2. Склейка с https
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 3. Редирект с www на без
+# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
+
+# 4. index php склейка с главной
+RewriteRule ^index$ index.php [L]
+# из-за этого не открывается
+
+
+# 5. index.html склейка с главной
+RewriteRule ^index\.html$ / [L]
+
+# 6. Если страница не найдена открывать 404.php файл
+ErrorDocument 404 /404.php
+
+# Добавьте дополнительные правила для других псевдостраниц
+
+# 8. Обработка запросов к robots.txt
+RewriteRule ^robots\.txt$ robots.php [L]
