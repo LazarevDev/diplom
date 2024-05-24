@@ -117,8 +117,9 @@ td{
 }
 
 .userTableName h2{
-    font-size: 12px;
+    font-size: 12px; 
     font-weight: 500;
+    color: #333;
 }
 
 .userTableName p{
@@ -135,13 +136,22 @@ td{
     height: 13px;
 }
 
-
 /* form */
 
 .input{
     width: calc(100% - 22px);
     padding: 16px 10px;
     background: #FAFAFA;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+.select{
+    width: 100%;
+    padding: 16px 10px;
+    background: #FAFAFA;
+    color: #666;
     border-radius: 5px;
     margin-top: 15px;
     font-size: 15px;
@@ -155,6 +165,92 @@ td{
     border-radius: 5px;
     resize: vertical;
     margin-top: 15px;
+}
+
+
+.swal2-actions{
+    align-items: center;
+}
+
+.custom-ok-button , .custom-delete-button{
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    padding: 0.5em 1em !important;
+    font: inherit !important;
+    cursor: pointer !important;
+    outline: none !important;
+}
+
+.custom-ok-button:focus ,  .custom-delete-button:focus{
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.custom-ok-button, .custom-delete-button{
+    display: inline-block;
+    padding: 14px 28px !important;
+    background: #FF8A00 !important;
+    border: 1px solid #FF8A00 !important;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: .4s;
+    color: #fff !important;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.custom-ok-button:hover{
+    background: none !important;
+    color: #FF8A00 !important;
+    border: 1px solid #FF8A00 !important;
+}
+
+.custom-ok-button:active, .custom-delete-button:active{
+    box-shadow: 0 !important;
+    /* border: 0 !important; */
+}
+
+.custom-ok-button:focus, .custom-delete-button:focus{
+    box-shadow: 0 !important;
+}
+
+.custom-delete-button{
+    background: #ff3737 !important;
+    border: 1px solid #ff3737 !important;
+}
+
+.custom-delete-button:hover{
+    background: none !important;
+    color: #ff3737 !important;
+    border: 1px solid #ff3737 !important;
+}
+
+.custom-cancel-button {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    padding: 0.5em 1em !important;
+    font: inherit !important;
+    cursor: pointer !important;
+    outline: none !important;
+
+    display: inline-block;
+    padding: 14px 28px;
+    background: none !important;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: .4s;
+    color: #999 !important;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.custom-cancel-button:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .btn{
