@@ -1,13 +1,29 @@
 <script src="js/sweetalert2@11.js"></script>
 
 
+<?php 
+
+function success($param){
+    $arraySuccess = [
+        'update' => 'Информация обновлена',
+        'upload' => 'Информация добавлена.',
+        'delete' => 'Информация удалена',
+
+        'upload_check' => 'Чек сформирован',
+    ];
+
+    return $arraySuccess[$param];
+}
+
+?>
+
 <?php if (isset($_GET['success'])): ?>
     <script>
         window.addEventListener('load', function() {
             Swal.fire({
                 icon: 'success',
                 title: 'Успех!',
-                text: '<?php if($_GET['success'] == "update"){ echo "Информация обновлена"; }elseif($_GET['success'] == "delete"){ echo "Информация удалена"; }elseif($_GET['success'] == "upload"){ echo "Информация добавлена."; }; ?>',
+                text: '<?=success($_GET['success'])?>',
                 confirmButtonText: 'ОК',
                 customClass: {
                     confirmButton: 'custom-ok-button'
