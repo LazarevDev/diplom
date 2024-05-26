@@ -8,4 +8,14 @@ function position($role){
 
     return $arrayRole[$role];
 }
+
+function type($type){
+    $arrayType = [
+        'individuals' => 'Физ.лицо',
+        'pec' => 'ИП',
+        'llc' => 'ООО',
+    ];
+
+    return $arrayType[$type];
+}
 ?>
