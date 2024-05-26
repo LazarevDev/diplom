@@ -2,14 +2,14 @@
 require_once('require/db.php');
 
 if(isset($_POST['submit'])){
-    $login = $_POST['login'];
-    $password = $_POST['password'];
+    $phone = $_POST['phone'];
+    $password = md5($_POST['password']);
 
-    $query = mysqli_query($db, "SELECT * FROM `staff` WHERE `login` = '$login' and `password` = '$password'");
+    $query = mysqli_query($db, "SELECT * FROM `staff` WHERE `phone` = '$phone' and `password` = '$password'");
     $result = mysqli_fetch_array($query);
 
-    if(!empty($result)){
-        setcookie('login', $login);
+    if(!empty($result['phone'])){
+        setcookie('phone', $phone);
         setcookie('password', $password);
 
         header('Location: index.php');
@@ -26,6 +26,7 @@ if(isset($_POST['submit'])){
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/login.css">    
+    <script src="js/imask.js"></script>
     <title>Авторизация</title>
 </head>
 <body>
@@ -33,11 +34,18 @@ if(isset($_POST['submit'])){
         <div class="loginForm">
             <form action="" method="post" class="formLogin">
                 <h2>Авторизация</h2>
-                <input type="text" name="login" placeholder="Введите логин"><br>
-                <input type="password" name="password" placeholder="Введите пароль"><br>
+                <input type="text" name="phone" id="phoneInput" placeholder="Введите номер телефона"><br>
+                <input type="password" name="password" id="phoneInput" placeholder="Введите пароль"><br>
                 <input type="submit" class="submitLogin" name="submit" value="Войти">
             </form>
         </div>
     </section>
+    <script>
+        var phoneInput = document.getElementById('phoneInput');
+        var maskOptions = {
+            mask: '+{7} 000 000 00-00',
+        };
+        var mask = IMask(phoneInput, maskOptions);
+    </script>
 </body>
 </html>

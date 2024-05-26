@@ -1,3 +1,16 @@
+<?php 
+require_once('require/db.php');
+require_once('functions/position.php');
+require_once('functions/check_photo.php');
+
+$phoneCookie = $_COOKIE['phone'];
+$passwordCookie = $_COOKIE['password'];
+
+$queryStaff = mysqli_query($db, "SELECT * FROM `staff` WHERE `phone` = '$phoneCookie' AND `password` = '$passwordCookie'");
+$resultStaff = mysqli_fetch_array($queryStaff);
+
+?>
+
 <header>
     <div class="headerContainer">
         <div class="headerText">
@@ -8,12 +21,12 @@
 
         <div class="headerUser">
             <div class="headerUserPhoto">
-                <img src="img/users/item.png" alt="">
+                <?=checkPhoto('staff', $resultStaff['id'], $resultStaff['photo'])?>
             </div>
 
             <div class="headerUserName">
-                <h2>Сергей Лазарев</h2>
-                <p>lazarev.dev</p>
+                <h2><?=$resultStaff['name']?></h2>
+                <p><?=position($resultStaff['role'])?></p>
             </div>
 
             <span>
