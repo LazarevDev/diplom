@@ -1,0 +1,17 @@
+.accountingEmpty{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+
+.accountingEmpty h2{
+    color: #333;
+    font-size: 24px;
+}
+
+.accountingEmpty p{
+    color: #999;
+    font-size: 14px;
+}

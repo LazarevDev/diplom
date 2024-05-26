@@ -1,3 +1,75 @@
+<?php 
+require_once('require/db.php');
+require_once('functions/edit.php');
+require_once('functions/photo.php');
+require_once('functions/check_photo.php');
+$arrayEdit = [
+    'name' => null,
+    'boyer' => null,
+    'sale_price' => null,
+    'purchase_price' => null,
+    'count_product' => null,
+];
+
+if(isset($_GET['delete'])){
+    $deleteId = $_GET['delete'];
+
+    $queryDelete = mysqli_query($db, "DELETE FROM `interim_receipt` WHERE `id` = '$deleteId'");
+    header('Location: accounting?success=delete');
+    exit;
+}
+
+if(isset($_GET['edit'])){
+    $editID = $_GET['edit'];
+    
+    $queryEdit = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `id` = '$editID'");
+    $resultEdit = mysqli_fetch_array($queryEdit);
+
+    $arrayEdit = [
+        'name' => $resultEdit['name'],
+        'boyer' => $resultEdit['boyer'],
+        'sale_price' => $resultEdit['sale_price'],
+        'purchase_price' => $resultEdit['purchase_price'],
+        'count_product' => $resultEdit['count_product'],
+    ];
+
+    if(isset($_POST['submit'])){
+        $name = $_POST['name'];
+        $boyer = $_POST['boyer'];
+        $sale_price = $_POST['sale_price'];
+        $purchase_price = $_POST['purchase_price'];
+        $count_product = $_POST['count_product'];
+
+        $querySuppliers = mysqli_query($db, "UPDATE `interim_receipt` SET 
+        `name` = '$name', 
+        `boyer` = '$boyer', 
+        `sale_price` = '$sale_price', 
+        `purchase_price` = '$purchase_price', 
+        `count_product` = '$count_product' WHERE `id` = '$editID'");
+
+        header('Location: accounting?success=update');
+        exit;
+    }
+}else{
+    if(isset($_POST['submit'])){
+        $name = $_POST['name'];
+        $boyer = $_POST['boyer'];
+        $sale_price = $_POST['sale_price'];
+        $purchase_price = $_POST['purchase_price'];
+        $count_product = $_POST['count_product'];
+
+        $queryAddStaff = "INSERT INTO `interim_receipt` (`name`, `boyer`, `sale_price`, `purchase_price`, `count_product`, `staff_id`) VALUES 
+        ('$name', '$boyer', '$sale_price', '$purchase_price', '$count_product', '1')";
+        $resultAddStaff = mysqli_query($db, $queryAddStaff) or die(mysqli_error($db));
+
+        header('Location: accounting?success=upload');
+        exit;
+    }
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,14 +96,14 @@
                     <h2>Оформление товара</h2>
                 </div>
 
-                <form action="" class="form">
-                    <input type="text" class="input" placeholder="Название">
-                    <input type="text" class="input" placeholder="Покупатель">
-                    <input type="number" class="input" placeholder="Цена продажи">
-                    <input type="number" class="input" placeholder="Кол-во проданного товара">
-                    <textarea name="" id="" class="textarea" placeholder="Комментарий к товару"></textarea>
+                <form action="" method="post" class="form">
+                    <input type="text" class="input" name="name" placeholder="Название" <?php edit('input', $arrayEdit['name']); ?> required>
+                    <input type="text" class="input" name="boyer" placeholder="Покупатель" <?php edit('input', $arrayEdit['boyer']); ?> required>
+                    <input type="number" class="input" name="sale_price" placeholder="Цена продажи" <?php edit('input', $arrayEdit['sale_price']); ?> required>
+                    <input type="number" class="input" name="purchase_price" placeholder="Цена закупки" <?php edit('input', $arrayEdit['purchase_price']); ?> required>
+                    <input type="number" class="input" name="count_product" placeholder="Кол-во проданного товара" <?php edit('input', $arrayEdit['count_product']); ?> required>
                 
-                    <input type="submit" class="btn" value="Добавить">
+                    <input type="submit" name="submit" class="btn" value="Добавить">
                 </form>
             </div>
 
@@ -40,63 +112,57 @@
                     <h2>Формирование чека</h2>
                 </div>
 
-                <div class="tableContent">
-                    <table border="1">
-                        <tr>
-                            <th>Название</th>
-                            <th>Кол-во</th>
-                            <th>Цена/ед</th>
-                            <th>Общая цена</th>
-                            <th>Действия</th>
-                        </tr>
+                <?php $queryInterimReceiptCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '1' ORDER BY `id` DESC");
+                if(mysqli_num_rows($queryInterimReceiptCheck) > 0): ?>
 
-                        <tr>
-                            <td>Название товара</td>
-                            <td>12</td>
-                            <td>24.000 Руб</td>
-                            <td>24.000 Руб</td>
-                            <td>
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M19.1736 13.0336L19.9336 18.3136C19.9884 18.7201 19.8648 19.1305 19.5946 19.4391C19.3243 19.7477 18.9338 19.9244 18.5236 19.9236H18.3136L13.0336 19.1636C12.3179 19.0649 11.6541 18.7348 11.1436 18.2236L1.40356 8.47356C-0.491301 6.51167 -0.464202 3.39314 1.46447 1.46447C3.39314 -0.464202 6.51167 -0.491301 8.47356 1.40356L18.2336 11.1436C18.7448 11.6541 19.0749 12.3179 19.1736 13.0336ZM12.2536 17.1636C12.5301 17.4292 12.8773 17.6097 13.2536 17.6836L18.4636 18.3736L17.7336 13.2036C17.6597 12.8273 17.4792 12.4801 17.2136 12.2036L7.46356 2.46356C6.80662 1.78913 5.90506 1.40874 4.96356 1.40874C4.02206 1.40874 3.1205 1.78913 2.46356 2.46356C1.80464 3.11864 1.43414 4.00942 1.43414 4.93856C1.43414 5.8677 1.80464 6.75848 2.46356 7.41356L12.2536 17.1636Z"/>
-                                        <path d="M5.43356 4.37356C5.13805 4.0982 4.67755 4.10633 4.39194 4.39194C4.10633 4.67755 4.0982 5.13805 4.37356 5.43356L8.58356 9.64356C8.87638 9.93601 9.35074 9.93601 9.64356 9.64356C9.93602 9.35074 9.93602 8.87638 9.64356 8.58356L5.43356 4.37356Z" />
-                                    </svg>
-                                        
-                                </a>
+                    <div class="tableContent">
+                        <table border="1">
+                            <tr>
+                                <th>Название</th>
+                                <th>Кол-во</th>
+                                <th>Цена закупки</th>
+                                <th>Цена/ед</th>
+                                <th>Общая цена</th>
+                                <th>Действия</th>
+                            </tr>
 
-                                <a href="#" class="tdAction">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M13.1665 12.008L20.762 4.43822C21.0793 4.11791 21.0793 3.599 20.762 3.27868C20.4503 2.95264 19.9355 2.94285 19.6118 3.2568L12.0163 10.8266L4.51839 3.2568C4.36467 3.09288 4.15078 3 3.92702 3C3.70327 3 3.48938 3.09288 3.33566 3.2568C3.0543 3.56628 3.0543 4.04123 3.33566 4.35071L10.8335 11.9096L3.238 19.4685C2.92067 19.7888 2.92067 20.3077 3.238 20.628C3.38907 20.784 3.59685 20.871 3.81309 20.8687C4.03351 20.8867 4.25202 20.8159 4.42074 20.6718L12.0163 13.102L19.6118 20.7593C19.7629 20.9153 19.9707 21.0022 20.1869 21C20.4029 21.001 20.6102 20.9142 20.762 20.7593C21.0793 20.439 21.0793 19.9201 20.762 19.5998L13.1665 12.008Z"/>
-                                    </svg>
-                                        
-                                </a>
-                            </td>
-                        </tr>
+                            <?php $queryCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '1' ORDER BY `id` DESC");
+                            while($rowCheck = mysqli_fetch_array($queryCheck)): ?>
+                                <tr>
+                                    <td><?=$rowCheck['name']?></td>
+                                    <td><?=$rowCheck['count_product']?></td>
+                                    <td><?=$rowCheck['purchase_price']?>Руб</td>
+                                    <td><?=$rowCheck['sale_price']?>Руб</td>
+                                    <td><?php echo number_format($rowCheck['count_product'] * $rowCheck['sale_price']); ?>Руб</td>
+                                    <td>
+                                        <a href="accounting?edit=<?=$rowCheck['id']?>" class="tdAction">
+                                            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M19.1736 13.0336L19.9336 18.3136C19.9884 18.7201 19.8648 19.1305 19.5946 19.4391C19.3243 19.7477 18.9338 19.9244 18.5236 19.9236H18.3136L13.0336 19.1636C12.3179 19.0649 11.6541 18.7348 11.1436 18.2236L1.40356 8.47356C-0.491301 6.51167 -0.464202 3.39314 1.46447 1.46447C3.39314 -0.464202 6.51167 -0.491301 8.47356 1.40356L18.2336 11.1436C18.7448 11.6541 19.0749 12.3179 19.1736 13.0336ZM12.2536 17.1636C12.5301 17.4292 12.8773 17.6097 13.2536 17.6836L18.4636 18.3736L17.7336 13.2036C17.6597 12.8273 17.4792 12.4801 17.2136 12.2036L7.46356 2.46356C6.80662 1.78913 5.90506 1.40874 4.96356 1.40874C4.02206 1.40874 3.1205 1.78913 2.46356 2.46356C1.80464 3.11864 1.43414 4.00942 1.43414 4.93856C1.43414 5.8677 1.80464 6.75848 2.46356 7.41356L12.2536 17.1636Z"/>
+                                                <path d="M5.43356 4.37356C5.13805 4.0982 4.67755 4.10633 4.39194 4.39194C4.10633 4.67755 4.0982 5.13805 4.37356 5.43356L8.58356 9.64356C8.87638 9.93601 9.35074 9.93601 9.64356 9.64356C9.93602 9.35074 9.93602 8.87638 9.64356 8.58356L5.43356 4.37356Z" />
+                                            </svg>
+                                                
+                                        </a>
 
-                        <tr>
-                            <td>Название товара</td>
-                            <td>12</td>
-                            <td>24.000 Руб</td>
-                            <td>24.000 Руб</td>
-                            <td>
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M19.1736 13.0336L19.9336 18.3136C19.9884 18.7201 19.8648 19.1305 19.5946 19.4391C19.3243 19.7477 18.9338 19.9244 18.5236 19.9236H18.3136L13.0336 19.1636C12.3179 19.0649 11.6541 18.7348 11.1436 18.2236L1.40356 8.47356C-0.491301 6.51167 -0.464202 3.39314 1.46447 1.46447C3.39314 -0.464202 6.51167 -0.491301 8.47356 1.40356L18.2336 11.1436C18.7448 11.6541 19.0749 12.3179 19.1736 13.0336ZM12.2536 17.1636C12.5301 17.4292 12.8773 17.6097 13.2536 17.6836L18.4636 18.3736L17.7336 13.2036C17.6597 12.8273 17.4792 12.4801 17.2136 12.2036L7.46356 2.46356C6.80662 1.78913 5.90506 1.40874 4.96356 1.40874C4.02206 1.40874 3.1205 1.78913 2.46356 2.46356C1.80464 3.11864 1.43414 4.00942 1.43414 4.93856C1.43414 5.8677 1.80464 6.75848 2.46356 7.41356L12.2536 17.1636Z"/>
-                                        <path d="M5.43356 4.37356C5.13805 4.0982 4.67755 4.10633 4.39194 4.39194C4.10633 4.67755 4.0982 5.13805 4.37356 5.43356L8.58356 9.64356C8.87638 9.93601 9.35074 9.93601 9.64356 9.64356C9.93602 9.35074 9.93602 8.87638 9.64356 8.58356L5.43356 4.37356Z" />
-                                    </svg>
-                                </a>
+                                        <a href="accounting?delete=<?=$rowCheck['id']?>" class="tdAction">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M13.1665 12.008L20.762 4.43822C21.0793 4.11791 21.0793 3.599 20.762 3.27868C20.4503 2.95264 19.9355 2.94285 19.6118 3.2568L12.0163 10.8266L4.51839 3.2568C4.36467 3.09288 4.15078 3 3.92702 3C3.70327 3 3.48938 3.09288 3.33566 3.2568C3.0543 3.56628 3.0543 4.04123 3.33566 4.35071L10.8335 11.9096L3.238 19.4685C2.92067 19.7888 2.92067 20.3077 3.238 20.628C3.38907 20.784 3.59685 20.871 3.81309 20.8687C4.03351 20.8867 4.25202 20.8159 4.42074 20.6718L12.0163 13.102L19.6118 20.7593C19.7629 20.9153 19.9707 21.0022 20.1869 21C20.4029 21.001 20.6102 20.9142 20.762 20.7593C21.0793 20.439 21.0793 19.9201 20.762 19.5998L13.1665 12.008Z"/>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </table>
 
-                                <a href="#" class="tdAction">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M13.1665 12.008L20.762 4.43822C21.0793 4.11791 21.0793 3.599 20.762 3.27868C20.4503 2.95264 19.9355 2.94285 19.6118 3.2568L12.0163 10.8266L4.51839 3.2568C4.36467 3.09288 4.15078 3 3.92702 3C3.70327 3 3.48938 3.09288 3.33566 3.2568C3.0543 3.56628 3.0543 4.04123 3.33566 4.35071L10.8335 11.9096L3.238 19.4685C2.92067 19.7888 2.92067 20.3077 3.238 20.628C3.38907 20.784 3.59685 20.871 3.81309 20.8687C4.03351 20.8867 4.25202 20.8159 4.42074 20.6718L12.0163 13.102L19.6118 20.7593C19.7629 20.9153 19.9707 21.0022 20.1869 21C20.4029 21.001 20.6102 20.9142 20.762 20.7593C21.0793 20.439 21.0793 19.9201 20.762 19.5998L13.1665 12.008Z"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <a href="" class="btn">Сформировать чек</a>
-                </div>
+                        <a href="" class="btn">Сформировать чек</a>
+                    </div>
+                <?php else: ?>
+                    <div class="accountingEmpty">
+                        <div>
+                            <h2>Чек пустой</h2>
+                            <p>Добавьте товар</p>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
 
         </div>
