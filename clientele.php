@@ -166,6 +166,8 @@ if(isset($_GET['edit'])){
         </div>
     </div>
 
+    <?php require_once('require/success.php'); ?>
+
     <script>
         var phoneInput = document.getElementById('phoneInput');
         var maskOptions = {

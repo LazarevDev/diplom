@@ -153,7 +153,7 @@ if(isset($_GET['edit'])){
                                 <?php 
                                 $queryClient = mysqli_query($db, "SELECT * FROM `clientele` ORDER BY `id` DESC");
                                 while($rowClient = mysqli_fetch_array($queryClient)): ?>
-                                    <option value=""><?=$rowClient['buyer']?></option>
+                                    <option value="<?=$rowClient['id']?>"><?=$rowClient['buyer']?></option>
                                 <?php endwhile; ?>
                             </select>
                         
@@ -172,5 +172,7 @@ if(isset($_GET['edit'])){
 
         </div>
     </div>
+
+    <?php require_once('require/success.php'); ?>
 </body>
 </html>
