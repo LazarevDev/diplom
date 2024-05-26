@@ -27,7 +27,6 @@ if(isset($_GET['edit'])){
 
     $arrayEdit = [
         'name' => $resultEdit['name'],
-        'boyer' => $resultEdit['boyer'],
         'sale_price' => $resultEdit['sale_price'],
         'purchase_price' => $resultEdit['purchase_price'],
         'count_product' => $resultEdit['count_product'],
@@ -35,14 +34,12 @@ if(isset($_GET['edit'])){
 
     if(isset($_POST['submit'])){
         $name = $_POST['name'];
-        $boyer = $_POST['boyer'];
         $sale_price = $_POST['sale_price'];
         $purchase_price = $_POST['purchase_price'];
         $count_product = $_POST['count_product'];
 
         $querySuppliers = mysqli_query($db, "UPDATE `interim_receipt` SET 
         `name` = '$name', 
-        `boyer` = '$boyer', 
         `sale_price` = '$sale_price', 
         `purchase_price` = '$purchase_price', 
         `count_product` = '$count_product' WHERE `id` = '$editID'");
@@ -53,13 +50,12 @@ if(isset($_GET['edit'])){
 }else{
     if(isset($_POST['submit'])){
         $name = $_POST['name'];
-        $boyer = $_POST['boyer'];
         $sale_price = $_POST['sale_price'];
         $purchase_price = $_POST['purchase_price'];
         $count_product = $_POST['count_product'];
 
-        $queryAddStaff = "INSERT INTO `interim_receipt` (`name`, `boyer`, `sale_price`, `purchase_price`, `count_product`, `staff_id`) VALUES 
-        ('$name', '$boyer', '$sale_price', '$purchase_price', '$count_product', '1')";
+        $queryAddStaff = "INSERT INTO `interim_receipt` (`name`, `sale_price`, `purchase_price`, `count_product`, `staff_id`) VALUES 
+        ('$name', '$sale_price', '$purchase_price', '$count_product', '$idStaff')";
         $resultAddStaff = mysqli_query($db, $queryAddStaff) or die(mysqli_error($db));
 
         header('Location: accounting?success=upload');
@@ -98,7 +94,6 @@ if(isset($_GET['edit'])){
 
                 <form action="" method="post" class="form">
                     <input type="text" class="input" name="name" placeholder="Название" <?php edit('input', $arrayEdit['name']); ?> required>
-                    <input type="text" class="input" name="boyer" placeholder="Покупатель" <?php edit('input', $arrayEdit['boyer']); ?> required>
                     <input type="number" class="input" name="sale_price" placeholder="Цена продажи" <?php edit('input', $arrayEdit['sale_price']); ?> required>
                     <input type="number" class="input" name="purchase_price" placeholder="Цена закупки" <?php edit('input', $arrayEdit['purchase_price']); ?> required>
                     <input type="number" class="input" name="count_product" placeholder="Кол-во проданного товара" <?php edit('input', $arrayEdit['count_product']); ?> required>
@@ -112,7 +107,7 @@ if(isset($_GET['edit'])){
                     <h2>Формирование чека</h2>
                 </div>
 
-                <?php $queryInterimReceiptCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '1' ORDER BY `id` DESC");
+                <?php $queryInterimReceiptCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '$idStaff' AND `cheque_id` IS NULL ORDER BY `id` DESC");
                 if(mysqli_num_rows($queryInterimReceiptCheck) > 0): ?>
 
                     <div class="tableContent">
@@ -126,7 +121,7 @@ if(isset($_GET['edit'])){
                                 <th>Действия</th>
                             </tr>
 
-                            <?php $queryCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '1' ORDER BY `id` DESC");
+                            <?php $queryCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '$idStaff' AND `cheque_id` IS NULL ORDER BY `id` DESC");
                             while($rowCheck = mysqli_fetch_array($queryCheck)): ?>
                                 <tr>
                                     <td><?=$rowCheck['name']?></td>
@@ -153,7 +148,13 @@ if(isset($_GET['edit'])){
                             <?php endwhile; ?>
                         </table>
 
-                        <a href="" class="btn">Сформировать чек</a>
+                        <form action="upload_cheque.php" method="post" class="formSpaceBetween">
+                            <select name="" id="" class="select">
+                                <option value="">Выбрать покупателя</option>
+                            </select>
+                        
+                            <input type="submit" name="submit" class="btn" value="Сформировать чек">
+                        </form>
                     </div>
                 <?php else: ?>
                     <div class="accountingEmpty">

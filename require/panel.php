@@ -2,13 +2,6 @@
 require_once('require/db.php');
 require_once('functions/position.php');
 require_once('functions/check_photo.php');
-
-$phoneCookie = $_COOKIE['phone'];
-$passwordCookie = $_COOKIE['password'];
-
-$queryStaff = mysqli_query($db, "SELECT * FROM `staff` WHERE `phone` = '$phoneCookie' AND `password` = '$passwordCookie'");
-$resultStaff = mysqli_fetch_array($queryStaff);
-
 ?>
 
 <header>

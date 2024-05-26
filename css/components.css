@@ -270,3 +270,13 @@ td{
     background: none;
     color: #FF8A00;
 }
+
+.formSpaceBetween{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.input50{
+    width: 48%;
+}
