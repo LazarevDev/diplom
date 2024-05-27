@@ -164,23 +164,27 @@ if(isset($_GET['edit'])){
                 </div>
 
                 <form action="" method="post" class="form" enctype="multipart/form-data">
-                    <div class="formPhoto">
-                        <label class="photoCircle" id="photoCircle" for="fileInput" >
-                            <?php if(empty($arrayEdit['photo'])): ?>
-                                <img id="photoPreview" src="../img/holder.jpg">
-                            <?php else: ?>
-                                <img id="photoPreview" src="../img/staff/<?=$editID?>/<?=$arrayEdit['photo']?>">
-                            <?php endif; ?>
-                        </label>
-                        <input type="file" id="fileInput" name="photo" accept="image/*">
-                    </div>
+                    <div class="staffInputContainer">
+                        <div class="formPhoto">
+                            <label class="photoCircle" id="photoCircle" for="fileInput" >
+                                <?php if(empty($arrayEdit['photo'])): ?>
+                                    <img id="photoPreview" src="../img/holder.jpg">
+                                <?php else: ?>
+                                    <img id="photoPreview" src="../img/staff/<?=$editID?>/<?=$arrayEdit['photo']?>">
+                                <?php endif; ?>
+                            </label>
+                            <input type="file" id="fileInput" name="photo" accept="image/*">
+                        </div>
 
-                    <input type="text" name="name" class="input" placeholder="Имя и фамилия" <?php edit('input', $arrayEdit['name']); ?> required>
-                    <select name="role" class="select" required>
-                        <option value="">Должность</option>
-                        <option value="seller" <?php edit('select', $arrayEdit['role'], 'seller'); ?>>Продавец</option>
-                        <option value="manager" <?php edit('select', $arrayEdit['role'], 'manager'); ?>>Менеджер</option>
-                    </select>
+                        <div class="staffInputContent">
+                            <input type="text" name="name" class="input" placeholder="Имя и фамилия" <?php edit('input', $arrayEdit['name']); ?> required>
+                            <select name="role" class="select" required>
+                                <option value="">Должность</option>
+                                <option value="seller" <?php edit('select', $arrayEdit['role'], 'seller'); ?>>Продавец</option>
+                                <option value="manager" <?php edit('select', $arrayEdit['role'], 'manager'); ?>>Менеджер</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <input type="text" name="wages" class="input" placeholder="Фиксированная заработная плата сотрудника в месяц" <?php edit('input', $arrayEdit['wages']); ?> required>
                     <input type="number" name="percentage_product_sales" class="input" placeholder="Процент от проданного товара" <?php edit('input', $arrayEdit['percentage_product_sales']); ?>>

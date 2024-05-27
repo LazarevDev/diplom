@@ -1,3 +1,13 @@
+.staffInputContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.staffInputContent input:nth-child(1){
+    margin-top: 0px;
+}
+
 .formPhoto {
     display: flex;
     align-items: center;
@@ -7,8 +17,8 @@
 }
 
 .photoCircle {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     overflow: hidden;
     background-color: #f2f2f2;
