@@ -12,7 +12,7 @@ require_once('functions/check_photo.php');
             <p>ООО “СтройДом”</p>
         </div>
 
-        <div class="headerUser">
+        <div class="headerUser" id="headerUserActive" onclick="toggleMenu()">
             <div class="headerUserPhoto">
                 <?=checkPhoto('staff', $resultStaff['id'], $resultStaff['photo'])?>
             </div>
@@ -27,6 +27,29 @@ require_once('functions/check_photo.php');
                     <path d="M5.5 5.99999C5.3746 6.00059 5.25426 5.9504 5.16614 5.86077L0.126798 0.798177C-0.0466558 0.611171 -0.0415378 0.319755 0.138374 0.139013C0.318287 -0.0417294 0.608364 -0.0468711 0.794511 0.127383L5.5 4.85458L10.2055 0.127383C10.3916 -0.0468711 10.6817 -0.0417294 10.8616 0.139013C11.0415 0.319755 11.0467 0.611171 10.8732 0.798177L5.83386 5.86077C5.74574 5.9504 5.6254 6.00059 5.5 5.99999Z" fill="#999999"/>
                 </svg>
             </span>
+        </div>
+
+        <div id="dropdownMenu" class="dropdownMenu hidden">
+            <ul>
+                <li><a href="/profile">
+                    <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 14.71L15.82 15.85C16.0474 16.8356 15.8229 17.8713 15.2077 18.6742C14.5924 19.4771 13.6508 19.9633 12.64 20H3.36C2.34917 19.9633 1.40757 19.4771 0.792347 18.6742C0.177125 17.8713 -0.0474337 16.8356 0.18 15.85L0.42 14.71C0.696035 13.1668 2.02262 12.0327 3.59 12H12.41C13.9774 12.0327 15.304 13.1668 15.58 14.71ZM12.64 18.49C13.1478 18.4841 13.6257 18.2489 13.94 17.85V17.86C14.3257 17.3762 14.476 16.7458 14.35 16.14L14.11 15C13.9768 14.1552 13.2646 13.5226 12.41 13.49H3.59C2.73537 13.5226 2.02317 14.1552 1.89 15L1.65 16.14C1.52716 16.7426 1.67727 17.3687 2.06 17.85C2.37434 18.2489 2.85221 18.4841 3.36 18.49H12.64Z"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.49998 10H7.49999C5.29085 10 3.49998 8.20915 3.49998 6.00001V3.36001C3.49732 2.46807 3.85046 1.61189 4.48116 0.981192C5.11186 0.350491 5.96804 -0.00265152 6.85999 1.49917e-05H9.13999C10.0319 -0.00265152 10.8881 0.350491 11.5188 0.981192C12.1495 1.61189 12.5027 2.46807 12.5 3.36001V6.00001C12.5 8.20915 10.7091 10 8.49998 10ZM6.85999 1.50002C5.83274 1.50002 4.99999 2.33277 4.99999 3.36001V6.00001C4.99999 7.38073 6.11927 8.50001 7.49999 8.50001H8.49998C9.8807 8.50001 11 7.38073 11 6.00001V3.36001C11 2.86671 10.804 2.39361 10.4552 2.0448C10.1064 1.69598 9.63329 1.50002 9.13999 1.50002H6.85999Z" />
+                    </svg>
+
+                    Профиль
+                </a></li>
+                <div class="dropdownMenuHr"></div>
+                <li>
+                    <a href="/logout">
+                        <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.7501 0C16.3381 0.00538581 16.0055 0.338038 16.0001 0.75V2.75C16.0109 3.88044 15.5666 4.96773 14.7672 5.76711C13.9678 6.56649 12.8805 7.01079 11.7501 7H2.56007L7.28007 2.25C7.45096 1.94944 7.39424 1.57101 7.14275 1.33376C6.89126 1.0965 6.51018 1.06191 6.22007 1.25L0.220075 7.25C0.152284 7.31936 0.0980235 7.40075 0.0600746 7.49C-0.0200249 7.67504 -0.0200249 7.88496 0.0600746 8.07C0.0980235 8.15925 0.152284 8.24064 0.220075 8.31L6.22007 14.31C6.51289 14.6025 6.98726 14.6025 7.28007 14.31C7.57253 14.0172 7.57253 13.5428 7.28007 13.25L2.56007 8.5H11.7501C13.28 8.51622 14.752 7.91563 15.8338 6.83376C16.9157 5.75189 17.5163 4.27991 17.5001 2.75V0.75C17.4947 0.338038 17.162 0.00538581 16.7501 0Z"/>
+                        </svg>
+
+                        Выйти
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </header>
@@ -84,3 +107,28 @@ require_once('functions/check_photo.php');
         </svg>
     </a>
 </menu>
+
+<script>
+    document.addEventListener('click', function(event) {
+        var menu = document.getElementById('dropdownMenu');
+        var headerUser = document.querySelector('.headerUser');
+
+        if (!headerUser.contains(event.target) && !menu.contains(event.target)) {
+            menu.classList.add('hidden');
+            headerUserActive.classList.remove('headerUserActive')
+        }
+    });
+
+    function toggleMenu() {
+        var menu = document.getElementById('dropdownMenu');
+        var headerUserActive =document.getElementById('headerUserActive');
+        
+        if (menu.classList.contains('hidden')) {
+            menu.classList.remove('hidden');
+            headerUserActive.classList.add('headerUserActive')
+        } else {
+            headerUserActive.classList.remove('headerUserActive')
+            menu.classList.add('hidden');
+        }
+    }
+</script>
