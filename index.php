@@ -1,3 +1,62 @@
+<?php 
+require_once('require/db.php');
+require_once('functions/check_photo.php');
+require_once('functions/position.php');
+
+$queryTurnover = mysqli_query($db, "SELECT 
+    SUM(interim_receipt.count_product * interim_receipt.sale_price) as `sum_sale_price`,
+    SUM(interim_receipt.count_product * interim_receipt.purchase_price) as `sum_purchase_price`,
+    SUM(cheque.staff_percentage_product_sales * interim_receipt.count_product * interim_receipt.sale_price / 100) as `total_percentage_product_sales`,
+    (SELECT IFNULL(SUM(wages), 0) FROM staff) as total_wages,
+    (
+        IFNULL(SUM(interim_receipt.count_product * interim_receipt.sale_price), 0) - 
+        IFNULL(SUM(cheque.staff_percentage_product_sales * interim_receipt.count_product * interim_receipt.sale_price / 100), 0) - 
+        IFNULL(SUM(interim_receipt.count_product * interim_receipt.purchase_price), 0) - 
+        IFNULL((SELECT SUM(wages) FROM staff), 0)
+    ) as profit
+
+    FROM `cheque`
+    LEFT JOIN `interim_receipt` ON cheque.id = interim_receipt.cheque_id 
+    LEFT JOIN `staff` ON staff.id = interim_receipt.staff_id
+    WHERE cheque.date >= DATE('".date('Y-m')."-01 00:00:00')");
+
+$resultTurnover = mysqli_fetch_array($queryTurnover);
+
+$queryStaffWages = mysqli_query($db, "SELECT
+        s.id AS staff_id,
+        s.name AS staff_name,
+        s.photo AS photo,
+        s.role AS role,
+        
+        IFNULL(SUM(ir.count_product * ir.sale_price), 0) AS sum_sale_price,
+        /* IFNULL(SUM(ir.count_product * ir.purchase_price), 0) AS sum_purchase_price, */
+        IFNULL(SUM(c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100), 0) AS total_percentage_product_sales,
+        (
+            IFNULL(SUM(ir.count_product * ir.sale_price), 0) - 
+            IFNULL(SUM(c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100), 0) - 
+            IFNULL(SUM(ir.count_product * ir.purchase_price), 0) - 
+            s.wages
+        ) AS profit
+        FROM staff s
+        LEFT JOIN interim_receipt ir ON s.id = ir.staff_id
+        LEFT JOIN cheque c ON c.id = ir.cheque_id AND c.date >= DATE('".date('Y-m')."-01 00:00:00')
+        GROUP BY s.id, s.name
+        ORDER BY s.id
+");
+while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
+    $staffArray[] = [
+            'staff_id' => $rowStaffWages['staff_id'],
+            'photo' => $rowStaffWages['photo'],
+            'name' => $rowStaffWages['staff_name'],
+            'role' => $rowStaffWages['role'],
+
+            'total_percentage_product_sales' => $rowStaffWages['total_percentage_product_sales'],
+            'profit' => $rowStaffWages['profit'],
+        ];
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +76,7 @@
         <div class="pageTitle">
             <h1>Аналитика</h1>
         </div>
-        
+
         <div class="content contentWhite">
             <div class="contentTitle">
                 <h2>Статистика продаж за месяц</h2>
@@ -27,13 +86,13 @@
                 <div class="saleData">
                     <div class="saleDataTitle">
                         <h2>Оборот</h2>
-                        <p>8,545,400 Руб</p>
+                        <p><?=number_format($resultTurnover['sum_sale_price'])?> Руб.</p>
                     </div>
                     
                     <ul>
-                        <li>Расходы на товар: 346,000</li>
-                        <li>Расходы на сотрудников: 345,000</li>
-                        <li>Чистая прибыль: 8,999,999</li>
+                        <li>Расходы на товар: <?=number_format($resultTurnover['sum_purchase_price'])?> Руб.</li>
+                        <li>Расходы на сотрудников: <?php echo number_format($resultTurnover['total_percentage_product_sales'] + $resultTurnover['total_wages']); ?> Руб.</li>
+                        <li>Чистая прибыль: <?=number_format($resultTurnover['profit'])?> Руб.</li>
                     </ul>
                 </div>
                 <div class="doughnutChart">
@@ -44,7 +103,6 @@
             <div class="contentTitle" style="margin-top: 60px;">
                 <h2>Статистика сотрудников за месяц </h2>
             </div>
-
             <div class="spaceBetween barChartContainer">
                 <div class="barChart">
                     <canvas id="myBarChart"></canvas>
@@ -53,147 +111,42 @@
                 <div class="barTable">
                     <table border="1">
                         <tr>
-                            <th>Фамилия имя</th>
-                            <th>Должность</th>
-                            <th>Оборот</th>
-                            <th>Действия</th>
+                            <th>Имя</th>
+                            <th>Продажи</th>
+                            <th>Чистый доход</th>
                         </tr>
 
-                        <tr>
-                            <td>
-                                <div class="userTable">
-                                    <div class="userTableImg">
-                                        <img src="img/users/item.png" alt="">
-                                    </div>
+                        <?php foreach ($staffArray as $value) { ?>
+                            <tr>
+                                <td>
+                                <a href="profile/<?=$value['staff_id']?>" class="userTable">
+                                        <div class="userTableImg">
+                                            <?=checkPhoto('staff', $value['staff_id'], $value['photo']); ?>
+                                        </div>
 
-                                    <div class="userTableName">
-                                        <h2>Имя Фамилия</h2>
-                                        <p>lazarev.w3b</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Менеджер</td>
-                            <td>24.000 Руб</td>
-                            <td>
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 13 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.02361 0.21934L12.7833 6.03934C13.0722 6.33216 13.0722 6.80652 12.7833 7.09934C12.6457 7.24229 12.4569 7.32291 12.2597 7.32291C12.0625 7.32291 11.8737 7.24229 11.7361 7.09934L7.24096 2.55934V13.7893C7.24096 14.2036 6.90922 14.5393 6.5 14.5393C6.09078 14.5393 5.75904 14.2036 5.75904 13.7893V2.55934L1.26391 7.09934C1.12636 7.24195 0.937192 7.32143 0.740304 7.31934C0.543638 7.32028 0.354892 7.24098 0.216695 7.09934C-0.0722317 6.80652 -0.0722317 6.33216 0.216695 6.03934L5.97639 0.21934C6.26568 -0.0731134 6.73432 -0.0731134 7.02361 0.21934Z"/>
-                                        <path d="M1.5603 16.0793H11.4397C11.8489 16.0793 12.1807 16.4151 12.1807 16.8293C12.1807 17.2436 11.8489 17.5793 11.4397 17.5793H1.5603C1.15108 17.5793 0.819341 17.2436 0.819341 16.8293C0.819341 16.4151 1.15108 16.0793 1.5603 16.0793Z" />
-                                    </svg>
-                                </a>
-
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M6.7784 5C6.7784 3.91972 7.77305 3.04398 9 3.04398C10.227 3.04398 11.2216 3.91972 11.2216 5C11.2216 6.08028 10.227 6.95602 9 6.95602C7.77305 6.95602 6.7784 6.08028 6.7784 5ZM8.22727 5C8.22727 5.37575 8.57323 5.68035 9 5.68035C9.42677 5.68035 9.77273 5.37575 9.77273 5C9.77273 4.62425 9.42677 4.31965 9 4.31965C8.57323 4.31965 8.22727 4.62425 8.22727 5Z"/>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5495 1.40263L17.587 4.24311C17.848 4.4271 18 4.70557 18 5C18 5.29443 17.848 5.5729 17.587 5.75689L13.5495 8.59737C10.8884 10.4675 7.11162 10.4675 4.45055 8.59737L0.413034 5.75689C0.151963 5.5729 0 5.29443 0 5C0 4.70557 0.151963 4.4271 0.413034 4.24311L4.45055 1.40263C7.11162 -0.467542 10.8884 -0.467542 13.5495 1.40263ZM5.34885 7.64488C7.48584 9.14237 10.5142 9.14237 12.6511 7.64488L16.3409 5L12.6511 2.39764C10.5142 0.900148 7.48584 0.900148 5.34885 2.39764L1.65906 5L5.34885 7.64488Z"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div class="userTable">
-                                    <div class="userTableImg">
-                                        <img src="img/users/item.png" alt="">
-                                    </div>
-
-                                    <div class="userTableName">
-                                        <h2>Имя Фамилия</h2>
-                                        <p>lazarev.w3b</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Менеджер</td>
-                            <td>24.000 Руб</td>
-                            <td>
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 13 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.02361 0.21934L12.7833 6.03934C13.0722 6.33216 13.0722 6.80652 12.7833 7.09934C12.6457 7.24229 12.4569 7.32291 12.2597 7.32291C12.0625 7.32291 11.8737 7.24229 11.7361 7.09934L7.24096 2.55934V13.7893C7.24096 14.2036 6.90922 14.5393 6.5 14.5393C6.09078 14.5393 5.75904 14.2036 5.75904 13.7893V2.55934L1.26391 7.09934C1.12636 7.24195 0.937192 7.32143 0.740304 7.31934C0.543638 7.32028 0.354892 7.24098 0.216695 7.09934C-0.0722317 6.80652 -0.0722317 6.33216 0.216695 6.03934L5.97639 0.21934C6.26568 -0.0731134 6.73432 -0.0731134 7.02361 0.21934Z"/>
-                                        <path d="M1.5603 16.0793H11.4397C11.8489 16.0793 12.1807 16.4151 12.1807 16.8293C12.1807 17.2436 11.8489 17.5793 11.4397 17.5793H1.5603C1.15108 17.5793 0.819341 17.2436 0.819341 16.8293C0.819341 16.4151 1.15108 16.0793 1.5603 16.0793Z" />
-                                    </svg>
-                                </a>
-
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M6.7784 5C6.7784 3.91972 7.77305 3.04398 9 3.04398C10.227 3.04398 11.2216 3.91972 11.2216 5C11.2216 6.08028 10.227 6.95602 9 6.95602C7.77305 6.95602 6.7784 6.08028 6.7784 5ZM8.22727 5C8.22727 5.37575 8.57323 5.68035 9 5.68035C9.42677 5.68035 9.77273 5.37575 9.77273 5C9.77273 4.62425 9.42677 4.31965 9 4.31965C8.57323 4.31965 8.22727 4.62425 8.22727 5Z"/>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5495 1.40263L17.587 4.24311C17.848 4.4271 18 4.70557 18 5C18 5.29443 17.848 5.5729 17.587 5.75689L13.5495 8.59737C10.8884 10.4675 7.11162 10.4675 4.45055 8.59737L0.413034 5.75689C0.151963 5.5729 0 5.29443 0 5C0 4.70557 0.151963 4.4271 0.413034 4.24311L4.45055 1.40263C7.11162 -0.467542 10.8884 -0.467542 13.5495 1.40263ZM5.34885 7.64488C7.48584 9.14237 10.5142 9.14237 12.6511 7.64488L16.3409 5L12.6511 2.39764C10.5142 0.900148 7.48584 0.900148 5.34885 2.39764L1.65906 5L5.34885 7.64488Z"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div class="userTable">
-                                    <div class="userTableImg">
-                                        <img src="img/users/item.png" alt="">
-                                    </div>
-
-                                    <div class="userTableName">
-                                        <h2>Имя Фамилия</h2>
-                                        <p>lazarev.w3b</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Менеджер</td>
-                            <td>24.000 Руб</td>
-                            <td>
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 13 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.02361 0.21934L12.7833 6.03934C13.0722 6.33216 13.0722 6.80652 12.7833 7.09934C12.6457 7.24229 12.4569 7.32291 12.2597 7.32291C12.0625 7.32291 11.8737 7.24229 11.7361 7.09934L7.24096 2.55934V13.7893C7.24096 14.2036 6.90922 14.5393 6.5 14.5393C6.09078 14.5393 5.75904 14.2036 5.75904 13.7893V2.55934L1.26391 7.09934C1.12636 7.24195 0.937192 7.32143 0.740304 7.31934C0.543638 7.32028 0.354892 7.24098 0.216695 7.09934C-0.0722317 6.80652 -0.0722317 6.33216 0.216695 6.03934L5.97639 0.21934C6.26568 -0.0731134 6.73432 -0.0731134 7.02361 0.21934Z"/>
-                                        <path d="M1.5603 16.0793H11.4397C11.8489 16.0793 12.1807 16.4151 12.1807 16.8293C12.1807 17.2436 11.8489 17.5793 11.4397 17.5793H1.5603C1.15108 17.5793 0.819341 17.2436 0.819341 16.8293C0.819341 16.4151 1.15108 16.0793 1.5603 16.0793Z" />
-                                    </svg>
-                                </a>
-
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M6.7784 5C6.7784 3.91972 7.77305 3.04398 9 3.04398C10.227 3.04398 11.2216 3.91972 11.2216 5C11.2216 6.08028 10.227 6.95602 9 6.95602C7.77305 6.95602 6.7784 6.08028 6.7784 5ZM8.22727 5C8.22727 5.37575 8.57323 5.68035 9 5.68035C9.42677 5.68035 9.77273 5.37575 9.77273 5C9.77273 4.62425 9.42677 4.31965 9 4.31965C8.57323 4.31965 8.22727 4.62425 8.22727 5Z"/>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5495 1.40263L17.587 4.24311C17.848 4.4271 18 4.70557 18 5C18 5.29443 17.848 5.5729 17.587 5.75689L13.5495 8.59737C10.8884 10.4675 7.11162 10.4675 4.45055 8.59737L0.413034 5.75689C0.151963 5.5729 0 5.29443 0 5C0 4.70557 0.151963 4.4271 0.413034 4.24311L4.45055 1.40263C7.11162 -0.467542 10.8884 -0.467542 13.5495 1.40263ZM5.34885 7.64488C7.48584 9.14237 10.5142 9.14237 12.6511 7.64488L16.3409 5L12.6511 2.39764C10.5142 0.900148 7.48584 0.900148 5.34885 2.39764L1.65906 5L5.34885 7.64488Z"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div class="userTable">
-                                    <div class="userTableImg">
-                                        <img src="img/users/item.png" alt="">
-                                    </div>
-
-                                    <div class="userTableName">
-                                        <h2>Имя Фамилия</h2>
-                                        <p>lazarev.w3b</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Менеджер</td>
-                            <td>24.000 Руб</td>
-                            <td>
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 13 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.02361 0.21934L12.7833 6.03934C13.0722 6.33216 13.0722 6.80652 12.7833 7.09934C12.6457 7.24229 12.4569 7.32291 12.2597 7.32291C12.0625 7.32291 11.8737 7.24229 11.7361 7.09934L7.24096 2.55934V13.7893C7.24096 14.2036 6.90922 14.5393 6.5 14.5393C6.09078 14.5393 5.75904 14.2036 5.75904 13.7893V2.55934L1.26391 7.09934C1.12636 7.24195 0.937192 7.32143 0.740304 7.31934C0.543638 7.32028 0.354892 7.24098 0.216695 7.09934C-0.0722317 6.80652 -0.0722317 6.33216 0.216695 6.03934L5.97639 0.21934C6.26568 -0.0731134 6.73432 -0.0731134 7.02361 0.21934Z"/>
-                                        <path d="M1.5603 16.0793H11.4397C11.8489 16.0793 12.1807 16.4151 12.1807 16.8293C12.1807 17.2436 11.8489 17.5793 11.4397 17.5793H1.5603C1.15108 17.5793 0.819341 17.2436 0.819341 16.8293C0.819341 16.4151 1.15108 16.0793 1.5603 16.0793Z" />
-                                    </svg>
-                                </a>
-
-                                <a href="#" class="tdAction">
-                                    <svg viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M6.7784 5C6.7784 3.91972 7.77305 3.04398 9 3.04398C10.227 3.04398 11.2216 3.91972 11.2216 5C11.2216 6.08028 10.227 6.95602 9 6.95602C7.77305 6.95602 6.7784 6.08028 6.7784 5ZM8.22727 5C8.22727 5.37575 8.57323 5.68035 9 5.68035C9.42677 5.68035 9.77273 5.37575 9.77273 5C9.77273 4.62425 9.42677 4.31965 9 4.31965C8.57323 4.31965 8.22727 4.62425 8.22727 5Z"/>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5495 1.40263L17.587 4.24311C17.848 4.4271 18 4.70557 18 5C18 5.29443 17.848 5.5729 17.587 5.75689L13.5495 8.59737C10.8884 10.4675 7.11162 10.4675 4.45055 8.59737L0.413034 5.75689C0.151963 5.5729 0 5.29443 0 5C0 4.70557 0.151963 4.4271 0.413034 4.24311L4.45055 1.40263C7.11162 -0.467542 10.8884 -0.467542 13.5495 1.40263ZM5.34885 7.64488C7.48584 9.14237 10.5142 9.14237 12.6511 7.64488L16.3409 5L12.6511 2.39764C10.5142 0.900148 7.48584 0.900148 5.34885 2.39764L1.65906 5L5.34885 7.64488Z"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
+                                        <div class="userTableName">
+                                            <h2><?=$value['name']?></h2>
+                                            <p><?=position($value['role'])?></p>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td><?=$value['total_percentage_product_sales']?></td>
+                                <td><?=$value['profit']?></td>
+                            </tr>
+                        <?php } ?>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
-        // Плагин для отображения текста в центре пончикового графика
+        // Преобразуем PHP массив в JSON строку
+        const staffArray = <?=json_encode($staffArray)?>;
+
+        // Извлекаем только имена сотрудников для использования в гистограмме
+        const staffNames = staffArray.map(staff => staff.name);
+        const staffProfit = staffArray.map(staff => staff.profit);
+
         const centerTextPlugin = {
             id: 'centerText',
             afterDatasetsDraw(chart, args, options) {
@@ -206,14 +159,14 @@
                     ctx.textBaseline = 'middle';
                     ctx.fillText('Оборот', width / 2, height / 2 - 10);
                     ctx.font = 'bold 16px Roboto';
-                    ctx.fillText('18,999,999', width / 2, height / 2 + 10);
+                    ctx.fillText('<?=number_format($resultTurnover['sum_sale_price'])?>', width / 2, height / 2 + 10);
                     ctx.restore();
                 }
             }
         };
-
+        
         Chart.register(centerTextPlugin);
-
+        
         // Пончиковый график
         const ctxDoughnut = document.getElementById('myDoughnutChart').getContext('2d');
         const dataDoughnut = {
@@ -224,7 +177,11 @@
             ],
             datasets: [{
                 label: 'Данные',
-                data: [346000, 345000, 8999999],
+                data: [
+                    <?=$resultTurnover['sum_purchase_price']?>, 
+                    <?php echo $resultTurnover['total_percentage_product_sales'] + $resultTurnover['total_wages']; ?>, 
+                    <?=$resultTurnover['profit']?>
+                ],
                 backgroundColor: [
                     '#e66f00',
                     '#e68200',
@@ -257,10 +214,10 @@
         // Гистограмма
         const ctxBar = document.getElementById('myBarChart').getContext('2d');
         const dataBar = {
-            labels: ['Иван Иванов', 'Петр Петров', 'Сергей Сергеев', 'Алексей Алексеев', 'Мария Мариева'],
+            labels: staffNames,
             datasets: [{
                 label: 'Цена',
-                data: [450, 18000, 12000, 24000, 8000],
+                data: staffProfit,  // Данные, соответствующие сотрудникам
                 backgroundColor: '#FF8A00',
                 borderWidth: 1
             }]

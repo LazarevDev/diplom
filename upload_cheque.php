@@ -11,11 +11,16 @@ if(isset($_POST['submit'])){
     $buyer_type = $resultClient['type'];
     $phone = $resultClient['phone'];
     $address = $resultClient['address'];
+
     $staff_id = $resultStaff['id'];
     $staff_name = $resultStaff['name'];
+    $staff_wages = $resultStaff['wages'];
+    $staff_percentage_product_sales = $resultStaff['percentage_product_sales'];
+    $staff_phone = $resultStaff['phone'];
+    $staff_address = $resultStaff['address'];
 
-    $queryAdd = "INSERT INTO `cheque` (`buyer`, `buyer_type`, `phone`, `address`, `staff_id`, `staff_name`) VALUES 
-    ('$buyer', '$buyer_type', '$phone', '$address', '$staff_id', '$staff_name')";
+    $queryAdd = "INSERT INTO `cheque` (`buyer`, `buyer_type`, `phone`, `address`, `staff_id`, `staff_name`, `staff_wages`, `staff_percentage_product_sales`, `staff_phone`, `staff_address`) VALUES 
+    ('$buyer', '$buyer_type', '$phone', '$address', '$staff_id', '$staff_name', '$staff_wages', '$staff_percentage_product_sales', '$staff_phone', '$staff_address')";
     $resultAddStaff = mysqli_query($db, $queryAdd) or die(mysqli_error($db));    
 
     $queryDescId = mysqli_query($db, "SELECT * FROM `cheque` ORDER BY `id` DESC");
