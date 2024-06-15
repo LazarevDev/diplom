@@ -1,8 +1,10 @@
 <?php 
 require_once('require/db.php');
+require_once('require/access.php');
 require_once('functions/edit.php');
 require_once('functions/photo.php');
 require_once('functions/check_photo.php');
+require_once('functions/position.php');
 $arrayEdit = [
     'photo' => null,
     'name' => null,
@@ -115,12 +117,12 @@ if(isset($_GET['edit'])){
                         <tr>
                             <th>Фамилия имя</th>
                             <th>Должность</th>
-                            <th>Доход</th>
+                            <!-- <th>Доход</th> -->
                             <th>ЗП</th>
                             <th>Действия</th>
                         </tr>
 
-                        <?php $queryRow = mysqli_query($db, "SELECT * FROM `staff` ORDER BY `id` DESC");
+                        <?php $queryRow = mysqli_query($db, "SELECT * FROM `staff` WHERE `role` != 'owner' ORDER BY `id` DESC");
                         while($row = mysqli_fetch_array($queryRow)): ?>
                             <tr>
                                 <td>
@@ -135,8 +137,8 @@ if(isset($_GET['edit'])){
                                         </div>
                                     </a>
                                 </td>
-                                <td><?=$row['role']?></td>
-                                <td>-</td>
+                                <td><?=position($row['role'])?></td>
+                                <!-- <td>-</td> -->
                                 <td><?=$row['wages']?>Руб./<?=$row['percentage_product_sales']?>%</td>
                                 <td>
                                     <a href="staff?edit=<?=$row['id']?>" class="tdAction">

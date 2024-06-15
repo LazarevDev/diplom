@@ -1,5 +1,6 @@
 <?php 
 require_once('require/db.php');
+require_once('require/access.php');
 require_once('functions/edit.php');
 require_once('functions/photo.php');
 require_once('functions/check_photo.php');

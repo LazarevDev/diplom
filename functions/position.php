@@ -18,4 +18,8 @@ function type($type){
 
     return $arrayType[$type];
 }
+
+function prefix($role, $return){
+
+}
 ?>

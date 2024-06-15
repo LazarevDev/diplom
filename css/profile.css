@@ -1,0 +1,57 @@
+.profile{
+
+}
+
+.profileContent{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.profileImg{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #ccc;
+    overflow: hidden;
+}
+
+.profileImg img{
+    width: 100%;
+    height: 100%;
+}
+
+.profileText{
+    text-align: center;
+    width: 100%;
+}
+
+.profileText h2{
+    margin-top: 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.profileText p{
+    color: #999;
+    font-size: 14px;
+}
+
+
+.accountingEmpty{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+
+.accountingEmpty h2{
+    color: #333;
+    font-size: 24px;
+}
+
+.accountingEmpty p{
+    color: #999;
+    font-size: 14px;
+}

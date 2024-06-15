@@ -12,7 +12,7 @@ if(isset($_POST['submit'])){
         setcookie('phone', $phone);
         setcookie('password', $password);
 
-        header('Location: index.php');
+        header('Location: profile');
         exit;
     }
 }

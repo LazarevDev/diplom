@@ -1,0 +1,67 @@
+tr:nth-child(2n){
+    background: none;
+}
+
+tr:nth-child(4n){
+    background: #FAFAFA;
+}
+
+.more{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.detailsContentTr{
+    background: #FAFAFA;
+}
+
+.detailsContent{
+    width: 100%;
+}
+
+.detailsContent h3{
+    font-size: 20px;
+    color: #333;
+}
+
+.detailContentBlocks{
+    display: flex;
+    justify-content: space-between;
+}
+
+.detailBlock{
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    margin-top: 20px;
+    width: 480px;
+}
+
+.detailBlock h2{
+    font-size: 16px;
+    color: #333;
+}
+
+.detailBlock p{
+    color: #999;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.detailsInfoPrice{
+    width: calc(100% - 620px);
+}
+
+.detailsInfoPriceBlock{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.detailsInfoPriceBlock p{
+    font-size: 14px;
+}

@@ -136,6 +136,34 @@ td{
     height: 13px;
 }
 
+/* status */
+
+.status{
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.statusApproved{
+    background: #14af00;
+    color: #fff;    
+}
+
+.statusCancelled{
+    background: #ccc;
+    color: #fff;    
+}
+
+.detailsRow {
+    display: none;
+    width: 100%;
+}
+
+.detailsContent {
+    /* padding: 15px; */
+    width: 100%;
+}
+
+
 /* form */
 
 .input{
@@ -279,4 +307,98 @@ td{
 
 .input50{
     width: 48%;
+}
+
+/* modal */
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.5s;
+    visibility: hidden;
+}
+
+.modal.show {
+    display: block; 
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 20px;
+    width: 80%;
+    max-width: 500px;
+    transition: transform 0.5s, opacity 0.5s;
+    transform: translateY(-50px);
+    opacity: 0;
+}
+
+.modalContentHead{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modalContentHead h2{
+    font-size: 16px;
+    color: #333;
+}
+
+.modalContentForm{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.modalInputLabel{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 25px;
+}
+
+.modalInputLabel label{
+    color: #666;
+}
+
+.modalInputLabel input{
+    width: 90%;
+    background: #fff;
+    padding: 10px;
+    color: #999;
+    background: #f2f2f2;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.modal-content.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

@@ -1,5 +1,6 @@
 <?php 
 require_once('require/db.php');
+require_once('require/access.php');
 
 if(isset($_POST['submit'])){    
     $idClient = $_POST['client'];

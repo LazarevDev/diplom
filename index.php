@@ -1,7 +1,34 @@
 <?php 
+session_start();
+
 require_once('require/db.php');
+require_once('require/access.php');
 require_once('functions/check_photo.php');
 require_once('functions/position.php');
+
+// $dateFrom - от
+// $dateBefore  - до
+
+if(empty($_SESSION['dateFrom'])){
+    $_SESSION['dateFrom'] = date('Y-m-d', strtotime('-1 month'));
+    $dateFrom = $_SESSION['dateFrom'];
+}
+
+if(empty($_SESSION['dateBefore'])){
+    $_SESSION['dateBefore'] = date('Y-m-d');
+    $dateBefore = $_SESSION['dateBefore'];
+}
+
+if(isset($_POST['submit'])){
+    $dateFromInput = $_POST['dateFrom'];
+    $dateBeforeInput = $_POST['dateBefore'];
+
+    $_SESSION['dateFrom'] = $dateFromInput;
+    $_SESSION['dateBefore'] = $dateBeforeInput;
+
+    header('Location: index');
+}
+
 
 $queryTurnover = mysqli_query($db, "SELECT 
     SUM(interim_receipt.count_product * interim_receipt.sale_price) as `sum_sale_price`,
@@ -18,30 +45,32 @@ $queryTurnover = mysqli_query($db, "SELECT
     FROM `cheque`
     LEFT JOIN `interim_receipt` ON cheque.id = interim_receipt.cheque_id 
     LEFT JOIN `staff` ON staff.id = interim_receipt.staff_id
-    WHERE cheque.date >= DATE('".date('Y-m')."-01 00:00:00')");
+    WHERE cheque.date >= DATE('".$_SESSION['dateFrom']."') AND  cheque.date <= DATE('".$_SESSION['dateBefore']."') AND cheque.status = 'approved'" );
 
 $resultTurnover = mysqli_fetch_array($queryTurnover);
 
 $queryStaffWages = mysqli_query($db, "SELECT
-        s.id AS staff_id,
-        s.name AS staff_name,
-        s.photo AS photo,
-        s.role AS role,
-        
-        IFNULL(SUM(ir.count_product * ir.sale_price), 0) AS sum_sale_price,
-        /* IFNULL(SUM(ir.count_product * ir.purchase_price), 0) AS sum_purchase_price, */
-        IFNULL(SUM(c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100), 0) AS total_percentage_product_sales,
-        (
-            IFNULL(SUM(ir.count_product * ir.sale_price), 0) - 
-            IFNULL(SUM(c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100), 0) - 
-            IFNULL(SUM(ir.count_product * ir.purchase_price), 0) - 
-            s.wages
-        ) AS profit
-        FROM staff s
-        LEFT JOIN interim_receipt ir ON s.id = ir.staff_id
-        LEFT JOIN cheque c ON c.id = ir.cheque_id AND c.date >= DATE('".date('Y-m')."-01 00:00:00')
-        GROUP BY s.id, s.name
-        ORDER BY s.id
+                s.id AS staff_id,
+                s.name AS staff_name,
+                s.photo AS photo,
+                s.role AS role,
+                
+                IFNULL(SUM(CASE WHEN c.status = 'approved' THEN ir.count_product * ir.sale_price ELSE 0 END), 0) AS sum_sale_price,
+                IFNULL(SUM(CASE WHEN c.status = 'approved' THEN c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100 ELSE 0 END), 0) AS total_percentage_product_sales,
+                (
+                    IFNULL(SUM(CASE WHEN c.status = 'approved' THEN ir.count_product * ir.sale_price ELSE 0 END), 0) - 
+                    IFNULL(SUM(CASE WHEN c.status = 'approved' THEN c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100 ELSE 0 END), 0) - 
+                    IFNULL(SUM(CASE WHEN c.status = 'approved' THEN ir.count_product * ir.purchase_price ELSE 0 END), 0) - 
+                    s.wages
+                ) AS profit
+                    FROM
+                staff s
+                    LEFT JOIN
+                interim_receipt ir ON s.id = ir.staff_id
+                    LEFT JOIN
+                cheque c ON c.id = ir.cheque_id AND c.date >= DATE('".date('Y-m')."-01 00:00:00')
+                    GROUP BY s.id, s.name
+                    ORDER BY s.id;
 ");
 while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
     $staffArray[] = [
@@ -66,6 +95,7 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
     <link rel="stylesheet" href="css/panel.css">
     <link rel="stylesheet" href="css/index.css">
     <script src="js/chart.js"></script>
+
     <title>Главная</title>
 </head>
 <body>
@@ -75,7 +105,35 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
     <div class="container">
         <div class="pageTitle">
             <h1>Аналитика</h1>
+        
+            <?php echo $_SESSION['dateFrom']." ".$_SESSION['dateBefore']; ?>
+        
         </div>
+
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <div class="modalContentHead">
+                    <h2>Выбрать дату продаж</h2>
+                    <span class="close">&times;</span>
+                </div>
+
+                <form class="modalContentForm" method="post">
+
+                    <div class="modalInputLabel">
+                        <label for="fromDate">От:</label>
+                        <input type="date" id="fromDate" name="dateFrom" required>
+                    </div>
+
+                    <div class="modalInputLabel">
+                        <label for="toDate">До:</label>
+                        <input type="date" id="toDate" name="dateBefore" required>
+                    </div>
+                  
+                    <input type="submit" class="btn" name="submit" value="Применить">
+                </form>
+            </div>
+        </div>
+
 
         <div class="content contentWhite">
             <div class="contentTitle">
@@ -93,6 +151,8 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
                         <li>Расходы на товар: <?=number_format($resultTurnover['sum_purchase_price'])?> Руб.</li>
                         <li>Расходы на сотрудников: <?php echo number_format($resultTurnover['total_percentage_product_sales'] + $resultTurnover['total_wages']); ?> Руб.</li>
                         <li>Чистая прибыль: <?=number_format($resultTurnover['profit'])?> Руб.</li>
+                        
+                        <a href="javascript:void(0);" id="openModalBtn" class="btn">Выбрать дату продаж</a>
                     </ul>
                 </div>
                 <div class="doughnutChart">
@@ -244,6 +304,8 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
         };
         const myBarChart = new Chart(ctxBar, configBar);
     </script>
+
+    <script src="js/modal.js"></script>
 
 </body>
 </html>
