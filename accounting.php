@@ -88,19 +88,21 @@ if(isset($_GET['edit'])){
         </div>
         
         <div class="content spaceBetween" style="padding: 0;">
-            <div class="contentWhite contentForm">
-                <div class="contentTitle">
-                    <h2>Оформление товара</h2>
-                </div>
+            <div>
+                <div class="contentWhite contentForm">
+                    <div class="contentTitle">
+                        <h2>Оформление товара</h2>
+                    </div>
 
-                <form action="" method="post" class="form">
-                    <input type="text" class="input" name="name" placeholder="Название" <?php edit('input', $arrayEdit['name']); ?> required>
-                    <input type="number" class="input" name="sale_price" placeholder="Цена продажи" <?php edit('input', $arrayEdit['sale_price']); ?> required>
-                    <input type="number" class="input" name="purchase_price" placeholder="Цена закупки" <?php edit('input', $arrayEdit['purchase_price']); ?> required>
-                    <input type="number" class="input" name="count_product" placeholder="Кол-во проданного товара" <?php edit('input', $arrayEdit['count_product']); ?> required>
-                
-                    <input type="submit" name="submit" class="btn" value="Добавить">
-                </form>
+                    <form action="" method="post" class="form">
+                        <input type="text" class="input" name="name" placeholder="Название" <?php edit('input', $arrayEdit['name']); ?> required>
+                        <input type="number" class="input" name="sale_price" placeholder="Цена продажи" <?php edit('input', $arrayEdit['sale_price']); ?> required>
+                        <input type="number" class="input" name="purchase_price" placeholder="Цена закупки" <?php edit('input', $arrayEdit['purchase_price']); ?> required>
+                        <input type="number" class="input" name="count_product" placeholder="Кол-во проданного товара" <?php edit('input', $arrayEdit['count_product']); ?> required>
+                    
+                        <input type="submit" name="submit" class="btn" value="Добавить">
+                    </form>
+                </div>
             </div>
 
             <div class="contentWhite contentInfo">

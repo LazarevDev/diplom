@@ -88,34 +88,36 @@ if(isset($_GET['edit'])){
         </div>
         
         <div class="content spaceBetween" style="padding: 0;">
-            <div class="contentWhite contentForm">
-                <div class="contentTitle">
-                    <h2>Добавить клиента</h2>
+            <div>
+                <div class="contentWhite contentForm">
+                    <div class="contentTitle">
+                        <h2>Добавить клиента</h2>
+                    </div>
+
+                    <form action="" method="post" class="form">
+                        <input type="text" class="input" name="buyer" placeholder="Название компании или ФИО" <?php edit('input', $arrayEdit['buyer']); ?> required>
+                        
+                        <select name="type" class="select" required>
+                            <option value="">Форма организации</option>
+                            <option value="individuals" <?php edit('select', $arrayEdit['type'], 'individuals'); ?>>Физ.лицо</option>
+                            <option value="llc" <?php edit('select', $arrayEdit['type'], 'llc'); ?>>ООО</option>
+                            <option value="ep" <?php edit('select', $arrayEdit['type'], 'ep'); ?>>ИП</option>
+                        </select>
+
+                        <input type="text" name="phone" class="input" id="phoneInput" placeholder="Номер тел." <?php edit('input', $arrayEdit['phone']); ?> required>
+                        <input type="text" name="address" class="input" id="phoneInput" placeholder="Адрес" <?php edit('input', $arrayEdit['address']); ?> required>
+                        
+                    
+                        <input type="submit" name="submit" class="btn" value="Добавить">
+                    </form>
                 </div>
-
-                <form action="" method="post" class="form">
-                    <input type="text" class="input" name="buyer" placeholder="Название компании или ФИО" <?php edit('input', $arrayEdit['buyer']); ?> required>
-                    
-                    <select name="type" class="select" required>
-                        <option value="">Форма организации</option>
-                        <option value="individuals" <?php edit('select', $arrayEdit['type'], 'individuals'); ?>>Физ.лицо</option>
-                        <option value="llc" <?php edit('select', $arrayEdit['type'], 'llc'); ?>>ООО</option>
-                        <option value="ep" <?php edit('select', $arrayEdit['type'], 'ep'); ?>>ИП</option>
-                    </select>
-
-                    <input type="text" name="phone" class="input" id="phoneInput" placeholder="Номер тел." <?php edit('input', $arrayEdit['phone']); ?> required>
-                    <input type="text" name="address" class="input" id="phoneInput" placeholder="Адрес" <?php edit('input', $arrayEdit['address']); ?> required>
-                    
-                
-                    <input type="submit" name="submit" class="btn" value="Добавить">
-                </form>
             </div>
 
             <div class="contentWhite contentInfo">
                 <div class="contentTitle">
                     <h2>Все клиенты</h2>
 
-                    <a href="export/clientele" class="btnOutline">Экспорт в excel</a>
+                    <a href="export/clientele   " class="btnOutline">Экспорт в excel</a>
                 </div>
 
                 <?php $queryСlienteleCheck = mysqli_query($db, "SELECT * FROM `clientele`");

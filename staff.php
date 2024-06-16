@@ -162,7 +162,8 @@ if(isset($_GET['edit'])){
                 </div>
             </div>
 
-            <div class="contentWhite contentForm">
+           <div>
+           <div class="contentWhite contentForm">
                 <div class="contentTitle">
                     <h2>Добавить сотрудника</h2>
                 </div>
@@ -199,6 +200,7 @@ if(isset($_GET['edit'])){
                     <input type="submit" name="submit" class="btn" value="Загрузить">
                 </form>
             </div>
+           </div>
         </div>
     </div>
     
