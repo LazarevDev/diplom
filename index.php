@@ -129,12 +129,12 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
 
                     <div class="modalInputLabel">
                         <label for="fromDate">От:</label>
-                        <input type="date" id="fromDate" name="dateFrom" required>
+                        <input type="date" id="fromDate" name="dateFrom" value="<?=date('Y-m-d', strtotime($_SESSION['dateFrom']))?>" required>
                     </div>
 
                     <div class="modalInputLabel">
                         <label for="toDate">До:</label>
-                        <input type="date" id="toDate" name="dateBefore" required>
+                        <input type="date" id="toDate" name="dateBefore" value="<?=date('Y-m-d', strtotime($_SESSION['dateBefore']))?>" required>
                     </div>
                   
                     <input type="submit" class="btn" name="submit" value="Применить">
