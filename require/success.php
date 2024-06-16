@@ -19,18 +19,6 @@ function success($param){
 
 <?php if (isset($_GET['success'])): ?>
     <script>
-        window.addEventListener('load', function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Успех!',
-                text: '<?=success($_GET['success'])?>',
-                confirmButtonText: 'ОК',
-                customClass: {
-                    confirmButton: 'custom-ok-button'
-                }
-            });
-        });
-
         function showDeleteConfirmation(deleteUrl) {
             Swal.fire({
                 title: 'Вы уверены?',
@@ -49,5 +37,17 @@ function success($param){
                 }
             });
         }
+        
+        window.addEventListener('load', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Успех!',
+                text: '<?=success($_GET['success'])?>',
+                confirmButtonText: 'ОК',
+                customClass: {
+                    confirmButton: 'custom-ok-button'
+                }
+            });
+        });
     </script>
 <?php endif; ?>
