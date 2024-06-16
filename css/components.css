@@ -299,6 +299,25 @@ td{
     color: #FF8A00;
 }
 
+.btnOutline{
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid #FF8A00;
+    color: #FF8A00;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: .4s;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.btnOutline:hover{
+    background: none;
+    background: #FF8A00;
+    color: #fff;
+}
+
+
 .formSpaceBetween{
     display: flex;
     justify-content: space-between;

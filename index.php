@@ -160,6 +160,7 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
                         <li>Чистая прибыль: <?=number_format($resultTurnover['profit'])?> ₽</li>
                         
                         <a href="javascript:void(0);" id="openModalBtn" class="btn">Выбрать дату продаж</a>
+                        <a href="export/analytics" class="btnOutline">Экспорт в excel</a>
                     </ul>
                 </div>
                 <div class="doughnutChart">
@@ -252,13 +253,13 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
                     <?=$resultTurnover['profit']?>
                 ],
                 backgroundColor: [
-                    '#ffa133',
-                    '#6695ff',
-                    '#ffb966',
+                    // '#ffa133',
+                    // '#6695ff',
+                    // '#ffb966',
 
-                    // '#e66f00',
-                    // '#e68200',
-                    // '#FF8A00',
+                    '#e66f00',
+                    '#e68200',
+                    '#FF8A00',
                 ],
                 borderWidth: 1
             }]
