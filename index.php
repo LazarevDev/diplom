@@ -10,13 +10,24 @@ require_once('functions/position.php');
 // $dateBefore  - до
 
 if(empty($_SESSION['dateFrom'])){
-    $_SESSION['dateFrom'] = date('Y-m-d', strtotime('-1 month'));
+    // $_SESSION['dateFrom'] = date('Y-m-d', strtotime('-1 month'));
+    $_SESSION['dateFrom'] = date('Y-m-01');
     $dateFrom = $_SESSION['dateFrom'];
 }
 
 if(empty($_SESSION['dateBefore'])){
     $_SESSION['dateBefore'] = date('Y-m-d');
     $dateBefore = $_SESSION['dateBefore'];
+}
+
+function datePreview(){
+    if($_SESSION['dateFrom'] ==  date('Y-m-01') AND $_SESSION['dateBefore'] == date('Y-m-d')){
+        return 'Статистика продаж за месяц';
+    }
+
+    if(!empty($_SESSION['dateFrom']) AND !empty($_SESSION['dateBefore'])){
+        return 'Статистика продаж за период (От '.date('d.m.y', strtotime($_SESSION['dateFrom'])).' до '.date('d.m.y', strtotime($_SESSION['dateBefore'])).')';
+    }
 }
 
 if(isset($_POST['submit'])){
@@ -31,21 +42,20 @@ if(isset($_POST['submit'])){
 
 
 $queryTurnover = mysqli_query($db, "SELECT 
-    SUM(interim_receipt.count_product * interim_receipt.sale_price) as `sum_sale_price`,
-    SUM(interim_receipt.count_product * interim_receipt.purchase_price) as `sum_purchase_price`,
-    SUM(cheque.staff_percentage_product_sales * interim_receipt.count_product * interim_receipt.sale_price / 100) as `total_percentage_product_sales`,
-    (SELECT IFNULL(SUM(wages), 0) FROM staff) as total_wages,
-    (
-        IFNULL(SUM(interim_receipt.count_product * interim_receipt.sale_price), 0) - 
-        IFNULL(SUM(cheque.staff_percentage_product_sales * interim_receipt.count_product * interim_receipt.sale_price / 100), 0) - 
-        IFNULL(SUM(interim_receipt.count_product * interim_receipt.purchase_price), 0) - 
-        IFNULL((SELECT SUM(wages) FROM staff), 0)
-    ) as profit
-
-    FROM `cheque`
-    LEFT JOIN `interim_receipt` ON cheque.id = interim_receipt.cheque_id 
-    LEFT JOIN `staff` ON staff.id = interim_receipt.staff_id
-    WHERE cheque.date >= DATE('".$_SESSION['dateFrom']."') AND  cheque.date <= DATE('".$_SESSION['dateBefore']."') AND cheque.status = 'approved'" );
+        SUM(ir.count_product * ir.sale_price) as `sum_sale_price`,
+        SUM(ir.count_product * ir.purchase_price) as `sum_purchase_price`,
+        SUM(c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100) as `total_percentage_product_sales`,
+        (SELECT IFNULL(SUM(s.wages), 0) FROM staff s) as total_wages,
+        (
+            IFNULL(SUM(ir.count_product * ir.sale_price), 0) - 
+            IFNULL(SUM(c.staff_percentage_product_sales * ir.count_product * ir.sale_price / 100), 0) - 
+            IFNULL(SUM(ir.count_product * ir.purchase_price), 0) - 
+            IFNULL((SELECT SUM(s.wages) FROM staff s), 0)
+        ) as profit
+        FROM `cheque` c
+        LEFT JOIN `interim_receipt` ir ON c.id = ir.cheque_id 
+        LEFT JOIN `staff` s ON s.id = ir.staff_id
+        WHERE c.date >= '".$_SESSION['dateFrom']."' AND c.date <= '".$_SESSION['dateBefore']." 23:59:59' AND c.status = 'approved' AND s.role != 'owner'");
 
 $resultTurnover = mysqli_fetch_array($queryTurnover);
 
@@ -68,7 +78,8 @@ $queryStaffWages = mysqli_query($db, "SELECT
                     LEFT JOIN
                 interim_receipt ir ON s.id = ir.staff_id
                     LEFT JOIN
-                cheque c ON c.id = ir.cheque_id AND c.date >= DATE('".date('Y-m')."-01 00:00:00')
+                cheque c ON c.id = ir.cheque_id AND c.date >= '".$_SESSION['dateFrom']."' AND c.date <= '".$_SESSION['dateBefore']." 23:59:59'
+                    WHERE s.role != 'owner'
                     GROUP BY s.id, s.name
                     ORDER BY s.id;
 ");
@@ -105,9 +116,6 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
     <div class="container">
         <div class="pageTitle">
             <h1>Аналитика</h1>
-        
-            <?php echo $_SESSION['dateFrom']." ".$_SESSION['dateBefore']; ?>
-        
         </div>
 
         <div id="myModal" class="modal">
@@ -134,23 +142,22 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
             </div>
         </div>
 
-
         <div class="content contentWhite">
             <div class="contentTitle">
-                <h2>Статистика продаж за месяц</h2>
+                <h2><?=datePreview()?></h2>
             </div>
 
             <div class="spaceBetween salesContainer">
                 <div class="saleData">
                     <div class="saleDataTitle">
                         <h2>Оборот</h2>
-                        <p><?=number_format($resultTurnover['sum_sale_price'])?> Руб.</p>
+                        <p><?=number_format($resultTurnover['sum_sale_price'])?>₽</p>
                     </div>
                     
                     <ul>
-                        <li>Расходы на товар: <?=number_format($resultTurnover['sum_purchase_price'])?> Руб.</li>
-                        <li>Расходы на сотрудников: <?php echo number_format($resultTurnover['total_percentage_product_sales'] + $resultTurnover['total_wages']); ?> Руб.</li>
-                        <li>Чистая прибыль: <?=number_format($resultTurnover['profit'])?> Руб.</li>
+                        <li>Расходы на товар: <?=number_format($resultTurnover['sum_purchase_price'])?> ₽</li>
+                        <li>Расходы на сотрудников: <?php echo number_format($resultTurnover['total_percentage_product_sales'] + $resultTurnover['total_wages']); ?> ₽</li>
+                        <li>Чистая прибыль: <?=number_format($resultTurnover['profit'])?> ₽</li>
                         
                         <a href="javascript:void(0);" id="openModalBtn" class="btn">Выбрать дату продаж</a>
                     </ul>
@@ -179,7 +186,7 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
                         <?php foreach ($staffArray as $value) { ?>
                             <tr>
                                 <td>
-                                <a href="profile/<?=$value['staff_id']?>" class="userTable">
+                                    <a href="profile/<?=$value['staff_id']?>" class="userTable">
                                         <div class="userTableImg">
                                             <?=checkPhoto('staff', $value['staff_id'], $value['photo']); ?>
                                         </div>
@@ -190,8 +197,9 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
                                         </div>
                                     </a>
                                 </td>
-                                <td><?=$value['total_percentage_product_sales']?></td>
-                                <td><?=$value['profit']?></td>
+
+                                <td><?=number_format($value['total_percentage_product_sales'])." ₽"?></td>
+                                <td><?=number_format($value['profit'])." ₽"?></td>
                             </tr>
                         <?php } ?>
                     </table>
@@ -199,6 +207,7 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
             </div>
         </div>
     </div>
+
     <script>
         // Преобразуем PHP массив в JSON строку
         const staffArray = <?=json_encode($staffArray)?>;
@@ -238,14 +247,18 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
             datasets: [{
                 label: 'Данные',
                 data: [
-                    <?=$resultTurnover['sum_purchase_price']?>, 
+                    <?php echo $resultTurnover['sum_purchase_price']; ?>, 
                     <?php echo $resultTurnover['total_percentage_product_sales'] + $resultTurnover['total_wages']; ?>, 
                     <?=$resultTurnover['profit']?>
                 ],
                 backgroundColor: [
-                    '#e66f00',
-                    '#e68200',
-                    '#FF8A00',
+                    '#ffa133',
+                    '#6695ff',
+                    '#ffb966',
+
+                    // '#e66f00',
+                    // '#e68200',
+                    // '#FF8A00',
                 ],
                 borderWidth: 1
             }]
@@ -276,7 +289,7 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
         const dataBar = {
             labels: staffNames,
             datasets: [{
-                label: 'Цена',
+                label: 'Чистый доход',
                 data: staffProfit,  // Данные, соответствующие сотрудникам
                 backgroundColor: '#FF8A00',
                 borderWidth: 1
