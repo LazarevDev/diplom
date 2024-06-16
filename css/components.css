@@ -9,9 +9,19 @@ body {
     margin: 95px 0 0 105px;
 }
 
+.pageTitle{
+    display: flex;
+    align-items: center;
+}
+
 .pageTitle h1{
     font-size: 20px;
     color: #333;
+}
+
+.pageTitle a{
+    margin-left: 25px;
+    margin-top: 0;
 }
 
 .content{
@@ -36,6 +46,8 @@ body {
 }
 
 .contentTitle{
+    display: flex;
+    align-items: center;
     width: 100%;
 }
 
@@ -43,7 +55,12 @@ body {
     color: #333;
     font-size: 20px;
     font-weight: 500;
-    width: 100%;
+}
+
+.contentTitle a{
+    display: inline-block;
+    margin-left: 25px;
+    margin-top: 0;
 }
 
 .spaceBetween{

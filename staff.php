@@ -157,6 +157,8 @@ if(isset($_GET['edit'])){
                             </tr>
                         <?php endwhile; ?>
                     </table>
+
+                    <a href="export/staff" class="btnOutline">Экспорт в excel</a>
                 </div>
             </div>
 

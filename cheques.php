@@ -22,6 +22,8 @@ require_once('functions/position.php');
     <div class="container">
         <div class="pageTitle">
             <h1>Чеки</h1>
+            
+            <a href="export/cheques" class="btnOutline">Экспорт в excel</a>
         </div>
 
         <div class="content contentWhite">

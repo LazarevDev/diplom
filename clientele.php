@@ -114,6 +114,8 @@ if(isset($_GET['edit'])){
             <div class="contentWhite contentInfo">
                 <div class="contentTitle">
                     <h2>Все клиенты</h2>
+
+                    <a href="export/clientele" class="btnOutline">Экспорт в excel</a>
                 </div>
 
                 <?php $queryСlienteleCheck = mysqli_query($db, "SELECT * FROM `clientele`");

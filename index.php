@@ -177,6 +177,7 @@ while($rowStaffWages = mysqli_fetch_array($queryStaffWages)){
                 </div>
 
                 <div class="barTable">
+                    <a href="export/personal" class="btnOutline">Экспорт в excel</a>
                     <table border="1">
                         <tr>
                             <th>Имя</th>
