@@ -58,10 +58,10 @@ if(isset($_GET['id'])){
                 <div class="tableContent" style="margin: 0;">
                     <table border="1">
                         <tr>
-                            <th>№-чека</th>
+                            <th>№-отчета</th>
                             <th>Название компании</th>
                             <th>Дата</th>
-                            <th>Цена чека</th>
+                            <th>Цена отчета</th>
                             <th>Статус</th>
                             <th>Действия</th>
                         </tr>
@@ -86,7 +86,7 @@ if(isset($_GET['id'])){
                             <tr id="details-<?=$row['id']?>" class="detailsRow">
                                 <td class="detailsContentTr" colspan="6">
                                     <div class="detailsContent">
-                                        <h3>Дополнительная информация о чеке: №<?=$row['id']?></h3>
+                                        <h3>Дополнительная информация: №<?=$row['id']?></h3>
 
                                         <div class="detailContentBlocks">
                                             <div class="detailsInfoContainer">

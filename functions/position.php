@@ -12,7 +12,7 @@ function position($role){
 function type($type){
     $arrayType = [
         'individuals' => 'Физ.лицо',
-        'pec' => 'ИП',
+        'ep' => 'ИП',
         'llc' => 'ООО',
     ];
 

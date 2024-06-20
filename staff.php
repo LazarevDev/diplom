@@ -43,12 +43,13 @@ if(isset($_GET['edit'])){
 
     if(isset($_POST['submit'])){
         $photo = $_FILES['photo']['name'];
-        $name = $_POST['name'];
-        $role = $_POST['role'];
-        $wages = $_POST['wages'];
-        $percentage_product_sales = $_POST['percentage_product_sales'];
-        $phone = $_POST['phone'];
-        $address = $_POST['address'];
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $role = mysqli_real_escape_string($db, $_POST['role']);
+        $wages = mysqli_real_escape_string($db, $_POST['wages']);
+        $percentage_product_sales = mysqli_real_escape_string($db, $_POST['percentage_product_sales']);
+        $phone = mysqli_real_escape_string($db, $_POST['phone']);
+        $address = mysqli_real_escape_string($db, $_POST['address']);
+        $password = md5(mysqli_real_escape_string($db, $_POST['password']));
 
         if(!empty($_POST['password'])){
             $password = md5($_POST['password']);
@@ -56,7 +57,13 @@ if(isset($_GET['edit'])){
             $querySuppliers = mysqli_query($db, "UPDATE `staff` SET `password` = '$password' WHERE `id` = '$editID'");
         }
 
-        $querySuppliers = mysqli_query($db, "UPDATE `staff` SET `name` = '$name', `role` = '$role', `wages` = '$wages', `percentage_product_sales` = '$percentage_product_sales', `phone` = '$phone', `address` = '$address' WHERE `id` = '$editID'");
+        $querySuppliers = mysqli_query($db, "UPDATE `staff` SET 
+        `name` = '$name', 
+        `role` = '$role', 
+        `wages` = '$wages', 
+        `percentage_product_sales` = '$percentage_product_sales', 
+        `phone` = '$phone', 
+        `address` = '$address' WHERE `id` = '$editID'");
         
         photo($photo, 'photo','staff', $db, $arrayEdit['photo']);
 
@@ -65,14 +72,13 @@ if(isset($_GET['edit'])){
     }
 }else{
     if(isset($_POST['submit'])){
-        $photo = $_FILES['photo']['name'];
-        $name = $_POST['name'];
-        $role = $_POST['role'];
-        $wages = $_POST['wages'];
-        $percentage_product_sales = $_POST['percentage_product_sales'];
-        $phone = $_POST['phone'];
-        $address = $_POST['address'];
-        $password = md5($_POST['password']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $role = mysqli_real_escape_string($db, $_POST['role']);
+        $wages = mysqli_real_escape_string($db, $_POST['wages']);
+        $percentage_product_sales = mysqli_real_escape_string($db, $_POST['percentage_product_sales']);
+        $phone = mysqli_real_escape_string($db, $_POST['phone']);
+        $address = mysqli_real_escape_string($db, $_POST['address']);
+        $password = md5(mysqli_real_escape_string($db, $_POST['password']));
 
         $queryAddStaff = "INSERT INTO `staff` (`name`, `role`, `wages`, `percentage_product_sales`, `phone`, `address`, `password`) VALUES 
         ('$name', '$role', '$wages', '$percentage_product_sales', '$phone', '$address', '$password')";
@@ -100,14 +106,14 @@ if(isset($_GET['edit'])){
 
     <script src="js/imask.js"></script>
     <script src="js/chart.js"></script>
-    <title>Персонал</title>
+    <title>Сотрудники</title>
 </head>
 <body>
     <?php require_once('require/panel.php'); ?>
 
     <div class="container">
         <div class="pageTitle">
-            <h1>Персонал</h1>
+            <h1>Сотрудники</h1>
         </div>
         
         <div class="content spaceBetween" style="padding: 0;">

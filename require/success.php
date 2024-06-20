@@ -5,11 +5,12 @@
 
 function success($param){
     $arraySuccess = [
-        'update' => 'Информация обновлена',
-        'upload' => 'Информация добавлена.',
-        'delete' => 'Информация удалена',
+        'update' => ['Успех!', 'Информация обновлена', 'success'],
+        'upload' => ['Успех!', 'Информация добавлена.', 'success'],
+        'delete' => ['Успех!', 'Информация удалена', 'warning'],
+        'error_auth' => ['Ошибка!', 'Неправильный логин или пароль', 'warning'],
 
-        'upload_check' => 'Чек сформирован',
+        'upload_check' => ['Успех!', 'Отчет сформирован', 'success'],
     ];
 
     return $arraySuccess[$param];
@@ -40,9 +41,9 @@ function success($param){
         
         window.addEventListener('load', function() {
             Swal.fire({
-                icon: 'success',
-                title: 'Успех!',
-                text: '<?=success($_GET['success'])?>',
+                icon: '<?=success($_GET['success'])[2]?>',
+                title: '<?=success($_GET['success'])[0]?>',
+                text: '<?=success($_GET['success'])[1]?>',
                 confirmButtonText: 'ОК',
                 customClass: {
                     confirmButton: 'custom-ok-button'

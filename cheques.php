@@ -14,14 +14,14 @@ require_once('functions/position.php');
     <link rel="stylesheet" href="css/panel.css">
     <link rel="stylesheet" href="css/cheques.css">
     <script src="js/chart.js"></script>
-    <title>Чеки</title>
+    <title>Отчеты</title>
 </head>
 <body>
     <?php require_once('require/panel.php'); ?>
 
     <div class="container">
         <div class="pageTitle">
-            <h1>Чеки</h1>
+            <h1>Отчеты</h1>
             
             <a href="export/cheques" class="btnOutline">Экспорт в excel</a>
         </div>
@@ -30,10 +30,10 @@ require_once('functions/position.php');
             <div class="tableContent" style="margin: 0;">
                 <table border="1">
                     <tr>
-                        <th>№-чека</th>
+                        <th>№-отчета</th>
                         <th>Название компании</th>
                         <th>Дата</th>
-                        <th>Цена чека</th>
+                        <th>Цена отчета</th>
                         <th>Статус</th>
                         <th>Действия</th>
                     </tr>
@@ -58,7 +58,7 @@ require_once('functions/position.php');
                         <tr id="details-<?=$row['id']?>" class="detailsRow">
                             <td class="detailsContentTr" colspan="6">
                                 <div class="detailsContent">
-                                    <h3>Дополнительная информация о чеке: №<?=$row['id']?></h3>
+                                    <h3>Дополнительная информация: №<?=$row['id']?></h3>
 
                                     <div class="detailContentBlocks">
                                         <div class="detailsInfoContainer">

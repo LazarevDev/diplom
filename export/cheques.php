@@ -5,7 +5,7 @@ require_once('../phpexcel/SimpleXLSXGen.php');
 
 $dateHash = md5(date('d-m-Y-His'));
 
-$exportPeriod = 'Все чеки';
+$exportPeriod = 'Все отчеты';
 
 $query = mysqli_query($db, "SELECT *, (SELECT SUM(sale_price * count_product) as sumPrice FROM `interim_receipt` WHERE `cheque_id` = cheque.id) as `sale_price` FROM `cheque` ORDER BY id DESC");
 
@@ -14,7 +14,7 @@ $books[] = [$exportPeriod];
 
 
 
-$books[] = ['ID', 'Название компании', 'Дата', 'Цена чека', 'Статус', 
+$books[] = ['ID', 'Название компании', 'Дата', 'Цена отчета', 'Статус', 
 'Название организации/покупателя', 'Тип', 'Телефон', 'Адрес', 'Информация о продавце', 'Телефон', 'Адрес'];
 
 while ($row = mysqli_fetch_assoc($query)) { 

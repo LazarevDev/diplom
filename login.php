@@ -14,6 +14,8 @@ if(isset($_POST['submit'])){
 
         header('Location: profile');
         exit;
+    }else{
+        header('Location: login.php?success=error_auth');
     }
 }
 ?>
@@ -34,8 +36,8 @@ if(isset($_POST['submit'])){
         <div class="loginForm">
             <form action="" method="post" class="formLogin">
                 <h2>Авторизация</h2>
-                <input type="text" name="phone" id="phoneInput" placeholder="Введите номер телефона"><br>
-                <input type="password" name="password" id="phoneInput" placeholder="Введите пароль"><br>
+                <input type="text" name="phone" id="phoneInput" placeholder="Введите номер телефона" required><br>
+                <input type="password" name="password" id="phoneInput" placeholder="Введите пароль" required><br>
                 <input type="submit" class="submitLogin" name="submit" value="Войти">
             </form>
         </div>
@@ -47,5 +49,7 @@ if(isset($_POST['submit'])){
         };
         var mask = IMask(phoneInput, maskOptions);
     </script>
+
+    <?php require_once('require/success.php'); ?>
 </body>
 </html>

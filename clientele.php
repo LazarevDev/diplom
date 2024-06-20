@@ -161,7 +161,7 @@ if(isset($_GET['edit'])){
                 <?php else: ?>
                     <div class="accountingEmpty">
                         <div>
-                            <h2>Чек пустой</h2>
+                            <h2>Отчет пустой</h2>
                             <p>Добавьте товар</p>
                         </div>
                     </div>

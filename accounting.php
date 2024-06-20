@@ -107,7 +107,7 @@ if(isset($_GET['edit'])){
 
             <div class="contentWhite contentInfo">
                 <div class="contentTitle">
-                    <h2>Формирование чека</h2>
+                    <h2>Формирование отчета</h2>
                 </div>
 
                 <?php $queryInterimReceiptCheck = mysqli_query($db, "SELECT * FROM `interim_receipt` WHERE `staff_id` = '$idStaff' AND `cheque_id` IS NULL ORDER BY `id` DESC");
@@ -160,13 +160,13 @@ if(isset($_GET['edit'])){
                                 <?php endwhile; ?>
                             </select>
                         
-                            <input type="submit" name="submit" class="btn" value="Сформировать чек">
+                            <input type="submit" name="submit" class="btn" value="Сформировать отчет">
                         </form>
                     </div>
                 <?php else: ?>
                     <div class="accountingEmpty">
                         <div>
-                            <h2>Чек пустой</h2>
+                            <h2>Отчет пустой</h2>
                             <p>Добавьте товар</p>
                         </div>
                     </div>
